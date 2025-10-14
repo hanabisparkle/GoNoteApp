@@ -16,4 +16,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:listitem="@layout/note_preview" />
 
+    <Button
+        android:id="@+id/createbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="596dp"
+        android:text="NEW NOTE"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="261dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

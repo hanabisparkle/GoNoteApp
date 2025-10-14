@@ -1,0 +1,42 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".NewNote">
+
+    <Button
+        android:id="@+id/cancelbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BACK/CANCEL"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:layout_editor_absoluteX="32dp">
+
+        <TextView
+            android:id="@+id/empty_note_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            tools:text="Untitled" />
+
+        <TextView
+            android:id="@+id/empty_note_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textSize="16sp"
+            tools:text="This is the full content of the note. It can be very long and will wrap as needed. The ScrollView ensures that the user can see all of it, no matter how much text is here." />
+
+
+    </LinearLayout>
+
+</FrameLayout>

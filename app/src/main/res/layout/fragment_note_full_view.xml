@@ -1,0 +1,56 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".NoteFullViewFragment">
+
+    <Button
+        android:id="@+id/backbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BACK"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/backbutton"
+        tools:layout_editor_absoluteX="32dp">
+
+        <TextView
+            android:id="@+id/note_full_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            tools:text="My Note Title" />
+
+        <TextView
+            android:id="@+id/note_full_timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            tools:text="October 13, 2025" />
+
+        <TextView
+            android:id="@+id/note_full_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textSize="16sp"
+            tools:text="This is the full content of the note. It can be very long and will wrap as needed. The ScrollView ensures that the user can see all of it, no matter how much text is here." />
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
