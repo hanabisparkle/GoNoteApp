@@ -23,6 +23,10 @@ class NotePreviewAdapter(
         notes.addAll(newNotes)
         notifyDataSetChanged()
     }
+    
+    fun getNoteAt(position: Int): Note {
+        return notes[position]
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotePreviewHolder {
         val inflater = LayoutInflater.from(parent.context)

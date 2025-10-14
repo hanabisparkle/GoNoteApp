@@ -1,34 +1,24 @@
 package com.example.gonoteapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
+import com.example.gonoteapp.model.Note
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+// Make sure your class name is NewNoteFragment
+// ... (imports)
+class NewNoteFragment : Fragment() {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [NewNote.newInstance] factory method to
- * create an instance of this fragment.
- */
-class NewNote : Fragment() {
-    // TODO: Rename and change types of parameters
-//    private var param1: String? = null
-//    private var param2: String? = null
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
-//    }
+    private var noteIdToEdit: Long = -1L
+    private var isEditMode = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,30 +31,48 @@ class NewNote : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val titleEditText: EditText = view.findViewById(R.id.new_note_title)
+        val contentEditText: EditText = view.findViewById(R.id.new_note_content)
         val cancelButton: Button = view.findViewById(R.id.cancelbutton)
+        val saveButton: Button = view.findViewById(R.id.save_button)
+
+        // Check if an ID was passed for editing
+        noteIdToEdit = arguments?.getLong("NOTE_ID_TO_EDIT", -1L) ?: -1L
+        Log.d("NewNoteFragment", "Note ID to Edit: $noteIdToEdit")
+        isEditMode = noteIdToEdit != -1L
+
+        if (isEditMode) {
+            // In Edit Mode: Load the existing note data
+            val note = NoteRepository.getNoteById(noteIdToEdit)
+            if (note != null) {
+                titleEditText.setText(note.title)
+                contentEditText.setText(note.content)
+            }
+        }
+
+        saveButton.setOnClickListener {
+            val title = titleEditText.text.toString()
+            val content = contentEditText.text.toString()
+
+            if (isEditMode) {
+                // UPDATE: Send a result back for the edited note
+                setFragmentResult("note_edited_request", bundleOf(
+                    "edited_id_key" to noteIdToEdit,
+                    "edited_title_key" to title,
+                    "edited_content_key" to content
+                ))
+            } else {
+                // CREATE: Send a result back for the new note
+                setFragmentResult("new_note_request", bundleOf(
+                    "note_title_key" to title,
+                    "note_content_key" to content
+                ))
+            }
+            parentFragmentManager.popBackStack()
+        }
 
         cancelButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
     }
-
-//    companion object {
-//        /**
-//         * Use this factory method to create a new instance of
-//         * this fragment using the provided parameters.
-//         *
-//         * @param param1 Parameter 1.
-//         * @param param2 Parameter 2.
-//         * @return A new instance of fragment NewNote.
-//         */
-//        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(param1: String, param2: String) =
-//            NewNote().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-//            }
-//    }
 }

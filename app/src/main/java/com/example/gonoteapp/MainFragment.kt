@@ -4,16 +4,44 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.model.Note
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainFragment : Fragment(), OnNoteClickListener {
 
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var noteAdapter: NotePreviewAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Listener for NEW notes
+        setFragmentResultListener("new_note_request") { requestKey, bundle ->
+            val newTitle = bundle.getString("note_title_key") ?: "Untitled"
+            val newContent = bundle.getString("note_content_key") ?: ""
+
+            // Use the repository to add the note
+            NoteRepository.addNote(newTitle, newContent)
+            // No need to update adapter here, onResume will do it
+        }
+
+        // Listener for EDITED notes
+        setFragmentResultListener("note_edited_request") { requestKey, bundle ->
+            val noteId = bundle.getLong("edited_id_key")
+            val newTitle = bundle.getString("edited_title_key") ?: "Untitled"
+            val newContent = bundle.getString("edited_content_key") ?: ""
+
+            // Use the repository to update the note
+            NoteRepository.updateNote(noteId, newTitle, newContent)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,43 +54,34 @@ class MainFragment : Fragment(), OnNoteClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val createButton: Button = view.findViewById(R.id.createbutton)
-
-        // Find the RecyclerView from the inflated view
+        val createButton: FloatingActionButton = view.findViewById(R.id.createbutton)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
 
-        // 1. Create the data
-        val initialNotes = getHardcodedNotes()
-
-        // 2. Create the adapter and give it the data
+        // Initialize the adapter (it will be empty at first)
         noteAdapter = NotePreviewAdapter(this)
-        noteAdapter.setData(initialNotes)
-
-        // 3. Set up the RecyclerView with the adapter and layout manager
         setupRecyclerView()
 
         createButton.setOnClickListener {
-            val fragment = NewNote()
+            // Navigate to NewNoteFragment for creating a new note
             parentFragmentManager.beginTransaction()
-                .replace(R.id.my_fragment_container, fragment)
+                .replace(R.id.my_fragment_container, NewNoteFragment())
                 .addToBackStack(null)
                 .commit()
-
-            // redirect to a fragment that lets user enter note contents and title
-            // fragment should contain a back/cancel button
-            // and a confirm new note button which adds a new note that will then show itself on the main menu
         }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        // Every time the fragment becomes visible, refresh the list from the single source of truth.
+        // This ensures new notes, updated notes, and deleted notes are always reflected.
+        noteAdapter.setData(NoteRepository.getAllNotes())
     }
 
     override fun onNoteClicked(note: Note) {
         val fragment = NoteFullViewFragment()
-
-        val bundle = Bundle()
-        bundle.putLong("NOTE_ID", note.id)
-        bundle.putString("NOTE_TITLE", note.title)
-        bundle.putString("NOTE_CONTENT", note.content)
-        bundle.putLong("NOTE_TIMESTAMP", note.timestamp)
-        fragment.arguments = bundle
+        // Pass the Note's ID, which is all the next fragment needs
+        fragment.arguments = bundleOf("NOTE_ID" to note.id)
 
         parentFragmentManager.beginTransaction()
             .replace(R.id.my_fragment_container, fragment)
@@ -73,14 +92,38 @@ class MainFragment : Fragment(), OnNoteClickListener {
     private fun setupRecyclerView() {
         notesRecyclerView.adapter = noteAdapter
         notesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false // We don't want to handle move gestures
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val noteToDelete = noteAdapter.getNoteAt(position)
+
+                showDeleteConfirmationDialog(noteToDelete)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(notesRecyclerView)
     }
 
-    private fun getHardcodedNotes(): List<Note> {
-        return listOf(
-            Note(1, "Meeting Notes", "Discuss Q3 budget and project timelines.", System.currentTimeMillis()),
-            Note(2, "Shopping List", "Milk, Bread, Eggs, Coffee.", System.currentTimeMillis()),
-            Note(3, "Book Ideas", "A story about a time-traveling librarian.", System.currentTimeMillis()),
-            Note(4, "Workout Plan", "Monday: Chest, Tuesday: Back, Wednesday: Legs.", System.currentTimeMillis())
-        )
+    private fun showDeleteConfirmationDialog(note: Note) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Note")
+            .setMessage("Are you sure you want to delete this note?")
+            .setPositiveButton("Delete") { _, _ ->
+                NoteRepository.deleteNote(note.id)
+                noteAdapter.setData(NoteRepository.getAllNotes())
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                // If canceled, refresh the adapter to bring the item back
+                noteAdapter.notifyDataSetChanged()
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 }
