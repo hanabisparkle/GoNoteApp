@@ -5,40 +5,58 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.gonoteapp.model.Folder
 
-class FolderListFragment : Fragment() {
-    // DISPLAY FOLDERS (1) recyclerview and adapter
+class FolderListFragment : Fragment(), FolderAdapter.OnFolderClickListener, NoteRepository.OnDataChangeListener {
     private lateinit var foldersRecyclerView: RecyclerView
     private lateinit var foldersAdapter: FolderAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // DISPLAY FOLDERS (2) find id to assign to recyclerview
         foldersRecyclerView = view.findViewById(R.id.folders_recycler_view)
-
-        // DISPLAY FOLDERS (3) initialize adapter (it will be empty at first)
-        foldersAdapter = FolderAdapter()
+        foldersAdapter = FolderAdapter(NoteRepository.getAllFolders(), this)
         setupRecyclerView()
     }
 
-    // DISPLAY FOLDERS (4):
-    // assigns adapter
-    // layout manager for displaying items
+    override fun onDestroyView() {
+        super.onDestroyView()
+    }
+
+    override fun onDataChanged() {
+        loadFolders()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (activity as? AppCompatActivity)?.supportActionBar?.title = "Folders"
+        loadFolders()
+    }
+
     private fun setupRecyclerView() {
         foldersRecyclerView.adapter = foldersAdapter
         foldersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+    }
+
+    private fun loadFolders() {
+        val folders = NoteRepository.getAllFolders()
+        foldersAdapter.setData(folders)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_folder_list, container, false)
+    }
+
+    override fun onFolderClick(folder: Folder) {
+        val fragment = FolderNotesFragment.newInstance(folder.name)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.my_fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

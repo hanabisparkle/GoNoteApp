@@ -1,8 +1,10 @@
 package com.example.gonoteapp
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -19,32 +21,45 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // BOTTOM NAV (1) find view id for bottom nav
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // BOTTOM NAV (2) set listener for bottom nav (home button, folders button, settings button)
         bottomNavigationView.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
+            var title: String = ""
             when (item.itemId) {
                 R.id.navigation_home -> {
                     selectedFragment = MainFragment()
+                    title = "Home"
                 }
                 R.id.navigation_folders -> {
                     selectedFragment = FolderListFragment()
+                    title = "Folders"
                 }
                 R.id.navigation_settings -> {
                     selectedFragment = SettingsFragment()
+                    title = "Settings"
                 }
             }
             if (selectedFragment != null) {
                 supportFragmentManager.beginTransaction().replace(R.id.my_fragment_container, selectedFragment).commit()
+                supportActionBar?.title = title
             }
             true
         }
 
-        // Set default fragment as home fragment
         if (savedInstanceState == null) {
             bottomNavigationView.selectedItemId = R.id.navigation_home
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

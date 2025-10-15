@@ -15,7 +15,6 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
     private val content: TextView = itemView.findViewById(R.id.item_note_content)
     private val timestamp: TextView = itemView.findViewById(R.id.item_note_timestamp)
 
-    private var currentNote: Note? = null
 
     // bind data to the views
     fun bindData(note: Note) {

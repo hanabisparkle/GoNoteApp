@@ -7,13 +7,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.model.Folder
 
-interface OnFolderClickListener {
-    fun onFolderClicked(folder: Folder)
-}
 
-class FolderAdapter () : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
+class FolderAdapter (
+    private var folders: List<Folder>,
+    private val listener: OnFolderClickListener
+    ) : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() {
 
-    private var folders = listOf<Folder>()
+    interface OnFolderClickListener {
+        fun onFolderClick(folder: Folder)
+    }
 
     class FolderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val folderName: TextView = view.findViewById(R.id.folder_name_textview)
@@ -29,6 +31,9 @@ class FolderAdapter () : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() 
         val folder = folders[position]
 
         holder.folderName.text = folder.name
+        holder.itemView.setOnClickListener {
+            listener.onFolderClick(folder)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -36,7 +41,7 @@ class FolderAdapter () : RecyclerView.Adapter<FolderAdapter.FolderViewHolder>() 
     }
 
     fun setData(newFolders: List<Folder>) {
-        folders = newFolders
+        this.folders = newFolders
         notifyDataSetChanged()
     }
 }
