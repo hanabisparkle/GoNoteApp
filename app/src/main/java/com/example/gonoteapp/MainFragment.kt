@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
@@ -11,6 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainFragment : BaseNoteListFragment() {
+
+    private var isSelectionMode = false
+    private lateinit var deleteButton: Button
+    private lateinit var addToFolderButton: Button
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,6 +31,23 @@ class MainFragment : BaseNoteListFragment() {
         val createButton: FloatingActionButton = view.findViewById(R.id.createbutton)
         createButton.setOnClickListener {
             showCreateDialog()
+        }
+
+        val selectButton: Button = view.findViewById(R.id.select_button)
+        deleteButton = view.findViewById(R.id.delete_button)
+        addToFolderButton = view.findViewById(R.id.add_to_folder_button)
+
+        selectButton.setOnClickListener {
+            isSelectionMode = !isSelectionMode
+            noteAdapter.setSelectionMode(isSelectionMode)
+
+            if (isSelectionMode) {
+                deleteButton.visibility = View.VISIBLE
+                addToFolderButton.visibility = View.VISIBLE
+            } else {
+                deleteButton.visibility = View.GONE
+                addToFolderButton.visibility = View.GONE
+            }
         }
     }
 

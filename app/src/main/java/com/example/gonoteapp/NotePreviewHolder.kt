@@ -1,6 +1,7 @@
 package com.example.gonoteapp
 
 import android.view.View
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.model.Note
@@ -10,21 +11,27 @@ import java.util.Locale
 
 class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListener) : RecyclerView.ViewHolder(itemView) {
 
-    // views for the note data that we want to show
     private val title: TextView = itemView.findViewById(R.id.item_note_title)
     private val content: TextView = itemView.findViewById(R.id.item_note_content)
     private val timestamp: TextView = itemView.findViewById(R.id.item_note_timestamp)
+    private val checkbox: CheckBox = itemView.findViewById(R.id.note_checkbox)
 
 
-    // bind data to the views
-    fun bindData(note: Note) {
+    fun bindData(note: Note, isSelectionMode: Boolean) {
         title.text = note.title
         content.text = note.content
         timestamp.text = formatDate(note.timestamp)
 
-        // when click note, show note details
+        if (isSelectionMode) {
+            checkbox.visibility = View.VISIBLE
+        } else {
+            checkbox.visibility = View.GONE
+        }
+
         itemView.setOnClickListener {
-            listener.onNoteClicked(note)
+            if (!isSelectionMode) {
+                listener.onNoteClicked(note)
+            }
         }
     }
 

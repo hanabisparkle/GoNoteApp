@@ -35,8 +35,17 @@
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceCaption"
             app:layout_constraintBaseline_toBaselineOf="@+id/item_note_title"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/note_checkbox"
             tools:text="Oct 13" />
+
+        <CheckBox
+            android:id="@+id/note_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/item_note_content"
