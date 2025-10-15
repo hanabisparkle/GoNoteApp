@@ -10,20 +10,22 @@ import java.util.Locale
 
 class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListener) : RecyclerView.ViewHolder(itemView) {
 
+    // views for the note data that we want to show
     private val title: TextView = itemView.findViewById(R.id.item_note_title)
     private val content: TextView = itemView.findViewById(R.id.item_note_content)
     private val timestamp: TextView = itemView.findViewById(R.id.item_note_timestamp)
 
     private var currentNote: Note? = null
 
+    // bind data to the views
     fun bindData(note: Note) {
         title.text = note.title
         content.text = note.content
         timestamp.text = formatDate(note.timestamp)
 
-        // Set the click listener here!
+        // when click note, show note details
         itemView.setOnClickListener {
-            listener.onNoteClicked(note) // Now it knows which note to pass
+            listener.onNoteClicked(note)
         }
     }
 

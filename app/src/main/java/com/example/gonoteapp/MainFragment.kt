@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainFragment : Fragment(), OnNoteClickListener {
 
+    // DISPLAY NOTES (1) recyclerview and adapter
     private lateinit var notesRecyclerView: RecyclerView
     private lateinit var noteAdapter: NotePreviewAdapter
 
@@ -55,18 +57,16 @@ class MainFragment : Fragment(), OnNoteClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         val createButton: FloatingActionButton = view.findViewById(R.id.createbutton)
+
+        // DISPLAY NOTES (2) find id to assign to recyclerview
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
 
-        // Initialize the adapter (it will be empty at first)
+        // DISPLAY NOTES (3) initialize adapter (it will be empty at first)
         noteAdapter = NotePreviewAdapter(this)
         setupRecyclerView()
 
         createButton.setOnClickListener {
-            // Navigate to NewNoteFragment for creating a new note
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.my_fragment_container, NewNoteFragment())
-                .addToBackStack(null)
-                .commit()
+            showCreateDialog()
         }
     }
 
@@ -89,6 +89,10 @@ class MainFragment : Fragment(), OnNoteClickListener {
             .commit()
     }
 
+    // DISPLAY NOTES (4):
+        // assigns adapter
+        // layout manager for displaying items
+        // itemtouchhelper for swipe to delete function
     private fun setupRecyclerView() {
         notesRecyclerView.adapter = noteAdapter
         notesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -124,6 +128,28 @@ class MainFragment : Fragment(), OnNoteClickListener {
                 dialog.dismiss()
             }
             .create()
+            .show()
+    }
+
+    private fun showCreateDialog() {
+        val options = arrayOf("New Note", "New Folder")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Create")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        // Navigate to NewNoteFragment for creating a new note
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.my_fragment_container, NewNoteFragment())
+                            .addToBackStack(null)
+                            .commit()
+                    }
+                    1 -> {
+                        // "New Folder" option
+                        Toast.makeText(requireContext(), "New folder created (not really)", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
             .show()
     }
 }
