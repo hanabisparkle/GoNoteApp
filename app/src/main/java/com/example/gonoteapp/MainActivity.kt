@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
+    var currentFolder: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -45,11 +47,13 @@ class MainActivity : AppCompatActivity() {
                     selectedFragment = MainFragment()
                     title = "Home"
                     createButton.visibility = View.VISIBLE
+                    onFolderSelected(null)
                 }
                 R.id.navigation_folders -> {
                     selectedFragment = FolderListFragment()
                     title = "Folders"
                     createButton.visibility = View.VISIBLE
+                    onFolderSelected(null)
                 }
                 R.id.navigation_settings -> {
                     selectedFragment = SettingsFragment()
@@ -73,6 +77,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onFolderSelected(folderName: String?) {
+        currentFolder = folderName
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
             onBackPressedDispatcher.onBackPressed()
@@ -88,8 +96,12 @@ class MainActivity : AppCompatActivity() {
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> {
+                        val newNoteFragment = NewNoteFragment()
+                        currentFolder?.let {
+                            newNoteFragment.arguments = bundleOf("FOLDER_NAME" to it)
+                        }
                         supportFragmentManager.beginTransaction()
-                            .replace(R.id.my_fragment_container, NewNoteFragment())
+                            .replace(R.id.my_fragment_container, newNoteFragment)
                             .addToBackStack(null)
                             .commit()
                     }

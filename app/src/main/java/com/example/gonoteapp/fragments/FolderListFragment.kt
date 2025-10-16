@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.ItemTouchHelper.Callback.getDefaultUIUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.FolderAdapter
+import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Folder
@@ -163,7 +164,8 @@ class FolderListFragment : Fragment(), FolderAdapter.OnFolderClickListener, Note
     }
 
     override fun onFolderClick(folder: Folder) {
-        val fragment = FolderNotesFragment.newInstance(folder.name)
+        (activity as? MainActivity)?.onFolderSelected(folder.name)
+        val fragment = FolderNotesFragment.newInstance(folder.id)
         parentFragmentManager.beginTransaction()
             .replace(R.id.my_fragment_container, fragment)
             .addToBackStack(null)

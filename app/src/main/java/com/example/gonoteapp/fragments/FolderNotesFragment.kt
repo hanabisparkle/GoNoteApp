@@ -4,21 +4,24 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gonoteapp.NoteRepository
+import com.example.gonoteapp.NoteRepository.getFolderById
+import kotlin.properties.Delegates
 
 class FolderNotesFragment : BaseNoteListFragment() {
 
     private lateinit var folderName: String
+    private var folderId by Delegates.notNull<Long>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            folderName = it.getString(ARG_FOLDER_NAME) ?: ""
+            folderId = it.getLong(ARG_FOLDER_ID)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        folderName = getFolderById(folderId)?.name ?: "Unknown Folder"
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.title = folderName
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -40,16 +43,15 @@ class FolderNotesFragment : BaseNoteListFragment() {
 
     override fun loadNotes() {
         // The implementation for this screen is to load notes for a specific folder
-        noteAdapter.setData(NoteRepository.getNotesForFolder(folderName))
+        noteAdapter.setData(NoteRepository.getNotesForFolder(folderId))
     }
 
     companion object {
-        private const val ARG_FOLDER_NAME = "folder_name"
-
-        fun newInstance(folderName: String): FolderNotesFragment {
+        private const val ARG_FOLDER_ID = "folder_id"
+        fun newInstance(folderId: Long): FolderNotesFragment {
             val fragment = FolderNotesFragment()
             val args = Bundle()
-            args.putString(ARG_FOLDER_NAME, folderName)
+            args.putLong(ARG_FOLDER_ID, folderId)
             fragment.arguments = args
             return fragment
         }

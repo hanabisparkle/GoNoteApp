@@ -25,12 +25,11 @@ class NewNoteViewModel : ViewModel() {
         _note.value = NoteRepository.getNoteById(noteId)
     }
 
-    fun saveNote(title: String, content: String) {
+    fun saveNote(title: String, content: String, folderName: String? = null) {
         if (isEditMode) {
-
-            NoteRepository.updateNote(noteIdToEdit, title, content)
+            NoteRepository.updateNote(noteIdToEdit, title, content, folderName)
         } else {
-            NoteRepository.addNote(title, content)
+            NoteRepository.addNote(title, content, folderName)
         }
         _navigateBack.value = true
     }
