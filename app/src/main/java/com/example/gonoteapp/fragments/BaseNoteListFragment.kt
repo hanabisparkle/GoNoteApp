@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -104,7 +105,7 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val noteToDelete = noteAdapter.getNoteAt(position)
-                //showDeleteConfirmationDialog(noteToDelete)
+                showDeleteConfirmationDialog(noteToDelete)
             }
         }
 
@@ -112,20 +113,20 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
         itemTouchHelper.attachToRecyclerView(notesRecyclerView)
     }
 
-//    private fun showDeleteConfirmationDialog(note: Note) {
-//        AlertDialog.Builder(requireContext())
-//            .setTitle("Delete Note")
-//            .setMessage("Are you sure you want to delete this note?")
-//            .setPositiveButton("Delete") { _, _ ->
-//                NoteRepository.deleteNote(note.id)
-//            }
-//            .setNegativeButton("Cancel") { dialog, _ ->
-//                noteAdapter.notifyDataSetChanged()
-//                dialog.dismiss()
-//            }
-//            .create()
-//            .show()
-//    }
+    private fun showDeleteConfirmationDialog(note: Note) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Note")
+            .setMessage("Are you sure you want to delete this note?")
+            .setPositiveButton("Delete") { _, _ ->
+                NoteRepository.deleteNote(note.id)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                noteAdapter.notifyDataSetChanged()
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
 
     protected abstract fun loadNotes()
 }

@@ -6,15 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Note
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 const val MAIN_FRAGMENT = "MainFragment.kt"
 class MainFragment : BaseNoteListFragment() {
@@ -33,11 +30,6 @@ class MainFragment : BaseNoteListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val createButton: FloatingActionButton = view.findViewById(R.id.createbutton)
-        createButton.setOnClickListener {
-            showCreateDialog()
-        }
 
         val selectButton: Button = view.findViewById(R.id.select_button)
         val deleteButton: Button = view.findViewById(R.id.delete_button)
@@ -100,48 +92,5 @@ class MainFragment : BaseNoteListFragment() {
             Log.d(MAIN_FRAGMENT, "showFolderSelectDialog() -> No folders found")
             Toast.makeText(requireContext(), "No folders to add to. Create a folder first.", Toast.LENGTH_LONG).show()
         }
-    }
-    private fun showCreateDialog() {
-        val options = arrayOf("New Note", "New Folder")
-        AlertDialog.Builder(requireContext())
-            .setTitle("Create")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.my_fragment_container, NewNoteFragment())
-                            .addToBackStack(null)
-                            .commit()
-                    }
-                    1 -> {
-                        showNewFolderDialog()
-                    }
-                }
-            }
-            .show()
-    }
-
-    private fun showNewFolderDialog() {
-        val editText = EditText(requireContext()).apply {
-            hint = "Folder Name"
-        }
-
-        val layout = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(60, 40, 60, 20)
-            addView(editText)
-        }
-
-        AlertDialog.Builder(requireContext())
-            .setTitle("New Folder")
-            .setView(layout)
-            .setPositiveButton("Create") { _, _ ->
-                val folderName = editText.text.toString()
-                if (folderName.isNotBlank()) {
-                    NoteRepository.addFolder(folderName)
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 }

@@ -89,4 +89,12 @@ object NoteRepository {
         }
         Log.d(NOTE_REPOSITORY, "updateNote() -> Note has been updated")
     }
+
+    fun deleteNote(id: Long) {
+        val noteToDelete = getNoteById(id)
+        noteToDelete?.let {
+            notes.remove(it)
+        }
+        Log.d(NOTE_REPOSITORY, "deleteNote() -> Note has been deleted")
+    }
 }
