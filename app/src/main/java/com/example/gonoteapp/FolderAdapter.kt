@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.model.Folder
+import com.example.gonoteapp.model.Note
 
 
 class FolderAdapter (
@@ -38,6 +39,10 @@ class FolderAdapter (
 
     override fun getItemCount(): Int {
         return folders.size
+    }
+
+    fun getFolderAt(position: Int): Folder {
+        return folders[position]
     }
 
     fun setData(newFolders: List<Folder>) {

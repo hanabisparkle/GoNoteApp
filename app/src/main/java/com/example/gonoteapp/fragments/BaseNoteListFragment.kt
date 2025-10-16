@@ -1,5 +1,6 @@
 package com.example.gonoteapp.fragments
 
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +13,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gonoteapp.fragments.NoteFullViewFragment
 import com.example.gonoteapp.NotePreviewAdapter
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.OnNoteClickListener
@@ -104,8 +104,68 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                val noteToDelete = noteAdapter.getNoteAt(position)
-                showDeleteConfirmationDialog(noteToDelete)
+                val note = noteAdapter.getNoteAt(position)
+
+                when (direction) {
+                    ItemTouchHelper.LEFT -> {
+                        showDeleteConfirmationDialog(note, viewHolder)
+                    }
+                    ItemTouchHelper.RIGHT -> {
+                        onNoteClicked(note)
+                        noteAdapter.notifyItemChanged(position)
+                    }
+                }
+            }
+
+            override fun onChildDraw(
+                c: Canvas,
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                dX: Float,
+                dY: Float,
+                actionState: Int,
+                isCurrentlyActive: Boolean
+            ) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val itemView = viewHolder.itemView
+                    val editLayout = itemView.findViewById<View>(R.id.edit_action_layout)
+                    val deleteLayout = itemView.findViewById<View>(R.id.delete_action_layout)
+                    val cardView = itemView.findViewById<View>(R.id.note_card)
+
+                    // Show the correct background
+                    when {
+                        dX > 0 -> { // Swiping right
+                            editLayout.visibility = View.VISIBLE
+                            deleteLayout.visibility = View.GONE
+                        }
+                        dX < 0 -> { // Swiping left
+                            editLayout.visibility = View.GONE
+                            deleteLayout.visibility = View.VISIBLE
+                        }
+                        else -> { // Not swiped
+                            editLayout.visibility = View.GONE
+                            deleteLayout.visibility = View.GONE
+                        }
+                    }
+
+                    // Manually move only the card on top, leaving the background stationary.
+                    cardView.translationX = dX
+
+                } else {
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                }
+            }
+
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                // This is called when a swipe is cancelled or completed.
+                super.clearView(recyclerView, viewHolder)
+                val itemView = viewHolder.itemView
+                // Reset the translation of the card
+                itemView.findViewById<View>(R.id.note_card).translationX = 0f
+
+                // Hide the backgrounds
+                itemView.findViewById<View>(R.id.edit_action_layout).visibility = View.GONE
+                itemView.findViewById<View>(R.id.delete_action_layout).visibility = View.GONE
             }
         }
 
@@ -113,16 +173,24 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
         itemTouchHelper.attachToRecyclerView(notesRecyclerView)
     }
 
-    private fun showDeleteConfirmationDialog(note: Note) {
+    private fun showDeleteConfirmationDialog(note: Note, viewHolder: RecyclerView.ViewHolder) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Note")
             .setMessage("Are you sure you want to delete this note?")
             .setPositiveButton("Delete") { _, _ ->
                 NoteRepository.deleteNote(note.id)
+                // Re-create the adapter and reset it on the RecyclerView to force a full refresh.
+                noteAdapter = NotePreviewAdapter(this)
+                notesRecyclerView.adapter = noteAdapter
+                loadNotes()
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                noteAdapter.notifyDataSetChanged()
-                dialog.dismiss()
+            .setNegativeButton("Cancel") { _, _ ->
+                // If cancelled, just redraw the item to reset its appearance.
+                noteAdapter.notifyItemChanged(viewHolder.adapterPosition)
+            }
+            .setOnCancelListener {
+                // Also reset appearance if the dialog is dismissed by tapping outside.
+                noteAdapter.notifyItemChanged(viewHolder.adapterPosition)
             }
             .create()
             .show()

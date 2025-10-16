@@ -1,7 +1,9 @@
 package com.example.gonoteapp
 
 import android.os.Bundle
+import android.text.Layout
 import android.view.MenuItem
+import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
@@ -33,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val createButton: FloatingActionButton = findViewById(R.id.createbutton)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
@@ -41,14 +44,17 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home -> {
                     selectedFragment = MainFragment()
                     title = "Home"
+                    createButton.visibility = View.VISIBLE
                 }
                 R.id.navigation_folders -> {
                     selectedFragment = FolderListFragment()
                     title = "Folders"
+                    createButton.visibility = View.VISIBLE
                 }
                 R.id.navigation_settings -> {
                     selectedFragment = SettingsFragment()
                     title = "Settings"
+                    createButton.visibility = View.GONE
                 }
             }
             if (selectedFragment != null) {
@@ -62,7 +68,6 @@ class MainActivity : AppCompatActivity() {
             bottomNavigationView.selectedItemId = R.id.navigation_home
         }
 
-        val createButton: FloatingActionButton = findViewById(R.id.createbutton)
         createButton.setOnClickListener {
             showCreateDialog()
         }

@@ -57,6 +57,22 @@ object NoteRepository {
         Log.d(NOTE_REPOSITORY, "getAllFolders()")
     }
 
+    fun updateFolder(id: Long, newName: String) {
+        val folderToUpdate = getFolderById(id)
+        folderToUpdate?.let {
+            it.name = newName
+        }
+        Log.d(NOTE_REPOSITORY, "updateFolder() -> Folder has been updated")
+    }
+
+    fun deleteFolder(id: Long) {
+        val folderToDelete = getFolderById(id)
+        folderToDelete?.let {
+            folders.remove(it)
+        }
+        Log.d(NOTE_REPOSITORY, "deleteFolder() -> Folder has been deleted")
+    }
+
     fun getAllNotes(): List<Note> {
         Log.d(NOTE_REPOSITORY, "getAllNotes()")
         return notes.toList()
@@ -65,6 +81,11 @@ object NoteRepository {
     fun getNoteById(id: Long): Note? {
         Log.d(NOTE_REPOSITORY, "getNoteById()")
         return notes.find { it.id == id }
+    }
+
+    fun getFolderById(id: Long): Folder? {
+        Log.d(NOTE_REPOSITORY, "getFolderById()")
+        return folders.find { it.id == id }
     }
 
     fun getNotesForFolder(folderName: String): List<Note> {
