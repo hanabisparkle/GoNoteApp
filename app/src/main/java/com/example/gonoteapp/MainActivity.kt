@@ -120,6 +120,10 @@ class MainActivity : AppCompatActivity() {
                 if (folderName.isNotBlank()) {
                     NoteRepository.addFolder(folderName)
                 }
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.my_fragment_container, FolderListFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
             .setNegativeButton("Cancel", null)
             .show()

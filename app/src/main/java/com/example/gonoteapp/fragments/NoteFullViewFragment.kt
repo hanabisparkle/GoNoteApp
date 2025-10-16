@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
+import io.noties.markwon.Markwon
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,6 +22,7 @@ class NoteFullViewFragment : Fragment(), NoteRepository.OnDataChangeListener {
     private lateinit var titleView: TextView
     private lateinit var contentView: TextView
     private lateinit var timestampView: TextView
+    private lateinit var markwon: Markwon
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +53,9 @@ class NoteFullViewFragment : Fragment(), NoteRepository.OnDataChangeListener {
         titleView = view.findViewById(R.id.note_full_title)
         contentView = view.findViewById(R.id.note_full_content)
         timestampView = view.findViewById(R.id.note_full_timestamp)
+
+        // Initialize Markwon
+        markwon = Markwon.create(requireContext())
 
         val backButton: Button = view.findViewById(R.id.backbutton)
         val editButton: Button = view.findViewById(R.id.editbutton)
@@ -91,7 +96,8 @@ class NoteFullViewFragment : Fragment(), NoteRepository.OnDataChangeListener {
 
         if (note != null && view != null) {
             titleView.text = note.title
-            contentView.text = note.content
+            // Use Markwon to render the content
+            markwon.setMarkdown(contentView, note.content)
             timestampView.text = formatDate(note.timestamp)
         }
     }

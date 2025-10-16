@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.gonoteapp.NewNoteViewModel
 import com.example.gonoteapp.R
+import io.noties.markwon.Markwon
+import io.noties.markwon.editor.MarkwonEditor
+import io.noties.markwon.editor.MarkwonEditorTextWatcher
+import java.util.concurrent.Executors
 
 class NewNoteFragment : Fragment() {
 
@@ -29,6 +33,21 @@ class NewNoteFragment : Fragment() {
         val contentEditText: EditText = view.findViewById(R.id.new_note_content)
         val cancelButton: Button = view.findViewById(R.id.cancelbutton)
         val saveButton: Button = view.findViewById(R.id.save_button)
+
+        // --- MARKWON IMPLEMENTATION START ---
+
+        // 1. Create an instance of Markwon
+        val markwon = Markwon.create(requireContext())
+
+        // 2. Create a MarkwonEditor
+        val editor = MarkwonEditor.create(markwon)
+
+        // 3. Attach the editor to the EditText
+        contentEditText.addTextChangedListener(
+            MarkwonEditorTextWatcher.withProcess(editor)
+        )
+
+        // --- MARKWON IMPLEMENTATION END ---
 
         val noteIdToEdit = arguments?.getLong("NOTE_ID_TO_EDIT", -1L) ?: -1L
         viewModel.loadNote(noteIdToEdit)
