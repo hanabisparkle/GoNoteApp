@@ -8,6 +8,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import com.example.gonoteapp.fragments.FolderListFragment
+import com.example.gonoteapp.fragments.MainFragment
+import com.example.gonoteapp.fragments.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {

@@ -1,9 +1,9 @@
-
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.gonoteapp.NoteRepository
 
 class FolderNotesFragment : BaseNoteListFragment() {
 

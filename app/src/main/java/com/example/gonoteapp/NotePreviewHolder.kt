@@ -1,5 +1,6 @@
 package com.example.gonoteapp
 
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.TextView
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+    const val NOTE_PREVIEW_HOLDER = "NotePreviewHolder.kt"
 class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListener) : RecyclerView.ViewHolder(itemView) {
 
     private val title: TextView = itemView.findViewById(R.id.item_note_title)
@@ -31,6 +33,18 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
         itemView.setOnClickListener {
             if (!isSelectionMode) {
                 listener.onNoteClicked(note)
+            }
+        }
+
+        checkbox.setOnCheckedChangeListener {
+            _, isChecked ->
+            if (isChecked) {
+                listener.onNoteSelected(note, isSelected = true)
+                Log.d(NOTE_PREVIEW_HOLDER, "bindData() -> Note selected")
+            } else {
+                listener.onNoteSelected(note, isSelected = false)
+                Log.d(NOTE_PREVIEW_HOLDER, "bindData() -> Note unselected")
+
             }
         }
     }

@@ -1,24 +1,31 @@
-
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gonoteapp.fragments.NoteFullViewFragment
+import com.example.gonoteapp.NotePreviewAdapter
+import com.example.gonoteapp.NoteRepository
+import com.example.gonoteapp.OnNoteClickListener
+import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Note
+
+const val BASE_NOTE_LIST_FRAGMENT = "BaseNoteListFragment.kt"
 
 abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepository.OnDataChangeListener {
 
     protected lateinit var notesRecyclerView: RecyclerView
     protected lateinit var noteAdapter: NotePreviewAdapter
+
+    private val selectedNotes = mutableSetOf<Note>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +75,21 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
             .replace(R.id.my_fragment_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onNoteSelected(note: Note, isSelected: Boolean) {
+        if (isSelected) {
+            selectedNotes.add(note)
+            Log.d(BASE_NOTE_LIST_FRAGMENT, "onNoteSelected() -> Note added to selected list")
+        } else {
+            selectedNotes.remove(note)
+            Log.d(BASE_NOTE_LIST_FRAGMENT, "onNoteSelected() -> Note removed from selected list")
+        }
+    }
+
+    fun getSelectedNotes() : Set<Note> {
+        Log.d(BASE_NOTE_LIST_FRAGMENT, "getSelectedNotes() -> Selected ${selectedNotes.size} notes")
+        return selectedNotes
     }
 
     private fun setupRecyclerView() {

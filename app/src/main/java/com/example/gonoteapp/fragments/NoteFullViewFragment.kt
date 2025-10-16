@@ -1,7 +1,6 @@
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,8 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import com.example.gonoteapp.NoteRepository
+import com.example.gonoteapp.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

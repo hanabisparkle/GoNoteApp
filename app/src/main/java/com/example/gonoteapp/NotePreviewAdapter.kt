@@ -7,6 +7,7 @@ import com.example.gonoteapp.model.Note
 
 interface OnNoteClickListener {
     fun onNoteClicked(note: Note)
+    fun onNoteSelected(note: Note, isSelected: Boolean)
 }
 
 class NotePreviewAdapter(

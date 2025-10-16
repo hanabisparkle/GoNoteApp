@@ -1,4 +1,4 @@
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.gonoteapp.NewNoteViewModel
+import com.example.gonoteapp.R
 
 class NewNoteFragment : Fragment() {
 

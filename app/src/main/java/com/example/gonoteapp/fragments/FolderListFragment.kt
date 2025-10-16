@@ -1,13 +1,16 @@
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gonoteapp.FolderAdapter
+import com.example.gonoteapp.NoteRepository
+import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Folder
 
 class FolderListFragment : Fragment(), FolderAdapter.OnFolderClickListener, NoteRepository.OnDataChangeListener {

@@ -1,5 +1,6 @@
 package com.example.gonoteapp
 
+import android.util.Log
 import androidx.core.os.bundleOf
 import com.example.gonoteapp.model.Folder
 import com.example.gonoteapp.model.Note
@@ -10,6 +11,7 @@ object NoteRepository {
         fun onDataChanged()
     }
 
+    private const val NOTE_REPOSITORY = "NOTE_REPOSITORY"
     private val notes = mutableListOf<Note>()
     private val folders = mutableListOf<Folder>()
 
@@ -30,10 +32,17 @@ object NoteRepository {
         notes.addAll(initialNotes)
     }
 
-    fun getAllFolders(): List<Folder> = folders.toList()
+    fun getAllFolders(): List<Folder> {
+        for (f in folders) {
+            f.noteCount = notes.count { it.folderId == f.id }
+            Log.d(NOTE_REPOSITORY, "getAllFolders() -> Folder Name: ${f.name}, Note Count: ${f.noteCount}")
+        }
+        return folders.toList()
+    }
 
     fun addFolder(name: String) {
         folders.add(Folder(nextFolderId++, name))
+        Log.d(NOTE_REPOSITORY, "addFolder() -> Folder Name: ${name}")
     }
 
     fun addNote(title: String, content: String) {
@@ -45,19 +54,28 @@ object NoteRepository {
             timestamp = System.currentTimeMillis()
         )
         notes.add(0, newNote)
+        Log.d(NOTE_REPOSITORY, "getAllFolders()")
     }
 
-    fun getAllNotes(): List<Note> = notes.toList()
+    fun getAllNotes(): List<Note> {
+        Log.d(NOTE_REPOSITORY, "getAllNotes()")
+        return notes.toList()
+    }
 
     fun getNoteById(id: Long): Note? {
+        Log.d(NOTE_REPOSITORY, "getNoteById()")
         return notes.find { it.id == id }
     }
 
     fun getNotesForFolder(folderName: String): List<Note> {
         val folder = folders.find { it.name == folderName }
+        Log.d(NOTE_REPOSITORY, "getNotesForFolder()")
         return if (folder != null) {
+            Log.d(NOTE_REPOSITORY, "getNotesForFolder() -> There are notes in this folder")
             notes.filter { it.folderId == folder.id }.toList()
         } else {
+            Log.d(NOTE_REPOSITORY, "getNotesForFolder() ->  This folder is empty")
+
             emptyList()
         }
     }
@@ -69,7 +87,6 @@ object NoteRepository {
             it.content = newContent
             it.timestamp = System.currentTimeMillis()
         }
-
-
+        Log.d(NOTE_REPOSITORY, "updateNote() -> Note has been updated")
     }
 }

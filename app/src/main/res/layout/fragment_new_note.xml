@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".NewNoteFragment">
+    tools:context=".fragments.NewNoteFragment">
 
     <!-- Back/Cancel Button constrained to the top-left -->
     <Button
