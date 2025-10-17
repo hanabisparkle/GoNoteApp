@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -57,8 +57,8 @@ class NoteFullViewFragment : Fragment(), NoteRepository.OnDataChangeListener {
         // Initialize Markwon
         markwon = Markwon.create(requireContext())
 
-        val backButton: Button = view.findViewById(R.id.backbutton)
-        val editButton: Button = view.findViewById(R.id.editbutton)
+        val backButton: ImageButton = view.findViewById(R.id.backbutton)
+        val editButton: ImageButton = view.findViewById(R.id.editbutton)
 
         currentNoteId = arguments?.getLong("NOTE_ID") ?: -1L
 

@@ -3,6 +3,7 @@ package com.example.gonoteapp.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.NoteRepository.getFolderById
 import kotlin.properties.Delegates
@@ -22,23 +23,21 @@ class FolderNotesFragment : BaseNoteListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         folderName = getFolderById(folderId)?.name ?: "Unknown Folder"
+        (activity as? MainActivity)?.updateTitle(folderName)
         val activity = requireActivity() as AppCompatActivity
-        activity.supportActionBar?.title = folderName
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     override fun onResume() {
         super.onResume()
         // When we resume this fragment, ensure the title is set correctly.
-        (activity as? AppCompatActivity)?.supportActionBar?.title = folderName
+        (activity as? MainActivity)?.updateTitle(folderName)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        // When leaving the fragment, reset the title to "Folders"
-        activity.supportActionBar?.title = "Folders"
     }
 
     override fun loadNotes() {

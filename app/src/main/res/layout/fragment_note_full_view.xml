@@ -1,61 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="@color/colorSurfaceContainer"
     tools:context=".fragments.NoteFullViewFragment">
 
-    <Button
+    <ImageButton
         android:id="@+id/backbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="BACK"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        style="?attr/actionButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_white_button_background"
+        android:contentDescription="Back"
+        android:src="@android:drawable/ic_menu_revert" />
 
-    <Button
+    <ImageButton
         android:id="@+id/editbutton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="EDIT"
+        style="?attr/actionButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_white_button_background"
+        android:contentDescription="Edit"
+        android:src="@android:drawable/ic_menu_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/note_full_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_white_background"
+        android:elevation="4dp"
+        android:minHeight="48dp"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/backbutton">
+        android:textAppearance="?attr/textAppearanceHeadline5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backbutton"
+        tools:text="My Note Title" />
 
-        <TextView
-            android:id="@+id/note_full_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline5"
-            tools:text="My Note Title" />
+    <TextView
+        android:id="@+id/note_full_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:textAppearance="?attr/textAppearanceCaption"
+        app:layout_constraintEnd_toEndOf="@id/note_full_title"
+        app:layout_constraintTop_toBottomOf="@id/note_full_title"
+        tools:text="October 13, 2025" />
 
-        <TextView
-            android:id="@+id/note_full_timestamp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceCaption"
-            tools:text="October 13, 2025" />
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_white_background"
+        android:elevation="4dp"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/note_full_title"
+        app:layout_constraintStart_toStartOf="@id/note_full_title"
+        app:layout_constraintTop_toBottomOf="@id/note_full_timestamp">
 
         <TextView
             android:id="@+id/note_full_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:lineSpacingMultiplier="1.2"
             android:textAppearance="?attr/textAppearanceBody1"
             android:textSize="16sp"
             tools:text="This is the full content of the note. It can be very long and will wrap as needed. The ScrollView ensures that the user can see all of it, no matter how much text is here." />
 
-
-    </LinearLayout>
-
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

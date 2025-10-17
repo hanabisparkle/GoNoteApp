@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -40,9 +40,9 @@ class NewNoteFragment : Fragment() {
 
         val titleEditText: EditText = view.findViewById(R.id.new_note_title)
         val contentEditText: EditText = view.findViewById(R.id.new_note_content)
-        val cancelButton: Button = view.findViewById(R.id.cancelbutton)
-        val saveButton: Button = view.findViewById(R.id.save_button)
-        val scanButton: Button = view.findViewById(R.id.scan_button)
+        val cancelButton: ImageButton = view.findViewById(R.id.cancelbutton)
+        val saveButton: ImageButton = view.findViewById(R.id.save_button)
+        val scanButton: ImageButton = view.findViewById(R.id.scan_button)
 
         val folderName = arguments?.getString("FOLDER_NAME")
 
@@ -112,7 +112,7 @@ class NewNoteFragment : Fragment() {
         val newText = if (currentText.isEmpty()) {
             "[Scanned OCR text will appear here]"
         } else {
-            "$currentText\n[Scanned OCR text will appear here]"
+            "$currentText [Scanned OCR text will appear here]"
         }
         contentEditText.setText(newText)
         contentEditText.setSelection(newText.length)

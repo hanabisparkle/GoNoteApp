@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,47 +24,40 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     var currentFolder: String? = null
+    private lateinit var toolbarTitle: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        toolbarTitle = findViewById(R.id.toolbar_title)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val createButton: FloatingActionButton = findViewById(R.id.createbutton)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
-            var title: String = ""
             when (item.itemId) {
                 R.id.navigation_home -> {
                     selectedFragment = MainFragment()
-                    title = "Home"
                     createButton.visibility = View.VISIBLE
                     onFolderSelected(null)
                 }
                 R.id.navigation_folders -> {
                     selectedFragment = FolderListFragment()
-                    title = "Folders"
                     createButton.visibility = View.VISIBLE
                     onFolderSelected(null)
                 }
                 R.id.navigation_settings -> {
                     selectedFragment = SettingsFragment()
-                    title = "Settings"
                     createButton.visibility = View.GONE
                 }
             }
             if (selectedFragment != null) {
                 supportFragmentManager.beginTransaction().replace(R.id.my_fragment_container, selectedFragment).commit()
-                supportActionBar?.title = title
             }
             true
         }
@@ -75,6 +69,10 @@ class MainActivity : AppCompatActivity() {
         createButton.setOnClickListener {
             showCreateDialog()
         }
+    }
+
+    fun updateTitle(newTitle: String) {
+        toolbarTitle.text = newTitle
     }
 
     fun onFolderSelected(folderName: String?) {

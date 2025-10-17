@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Note
@@ -61,7 +61,7 @@ class MainFragment : BaseNoteListFragment() {
 
     override fun onResume() {
         super.onResume()
-        (activity as? AppCompatActivity)?.supportActionBar?.title = "Home"
+        (activity as? MainActivity)?.updateTitle("Home")
     }
 
     override fun loadNotes() {

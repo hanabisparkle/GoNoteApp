@@ -111,8 +111,13 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
                         showDeleteConfirmationDialog(note, viewHolder)
                     }
                     ItemTouchHelper.RIGHT -> {
-                        onNoteClicked(note)
-                        noteAdapter.notifyItemChanged(position)
+                        val fragment = NewNoteFragment()
+                        fragment.arguments = bundleOf("NOTE_ID_TO_EDIT" to note.id)
+
+                        parentFragmentManager.beginTransaction()
+                            .replace(R.id.my_fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit()
                     }
                 }
             }
