@@ -2,14 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home"
-        android:title="Home" />
+        android:icon="@drawable/ic_note"
+        android:title="Home"
+        android:drawableTint="@android:color/black"/>
     <item
         android:id="@+id/navigation_folders"
         android:icon="@drawable/ic_folder"
-        android:title="Folders" />
+        android:title="Folders"
+        android:drawableTint="@android:color/black"/>
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/ic_settings"
-        android:title="Settings" />
+        android:title="Settings"
+        android:drawableTint="@android:color/black"/>
 </menu>

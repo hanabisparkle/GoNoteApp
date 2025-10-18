@@ -3,4 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorSurfaceContainer">#F5F5F5</color>
+    <color name="seaGreen">#A154C3AB</color>
+    <color name="seaGreenDark">#A101A581</color>
+<!--    <color name="Bright Green"></color>-->
+<!--    <color name="DeleteRed"></color>-->
+<!--    <color name="EditBlue"></color>-->
+<!--    <color name="TitleIconColor"></color>-->
+<!--    <color name="Light Green"></color>-->
 </resources>

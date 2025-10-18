@@ -13,4 +13,10 @@
         <item name="android:tint">@android:color/black</item>
     </style>
 
+    <style name="NavActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">#A354C3AB</item>
+    </style>
+
+
+
 </resources>

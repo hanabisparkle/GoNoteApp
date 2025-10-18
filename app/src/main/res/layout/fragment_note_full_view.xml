@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSurfaceContainer"
+    android:paddingTop="32dp"
     tools:context=".fragments.NoteFullViewFragment">
 
     <ImageButton
@@ -12,11 +13,12 @@
         style="?attr/actionButtonStyle"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_white_button_background"
+        android:layout_marginEnd="344dp"
         android:contentDescription="Back"
-        android:src="@android:drawable/ic_menu_revert" />
+        android:src="@drawable/ic_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/editbutton"
@@ -25,9 +27,8 @@
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_white_button_background"
         android:contentDescription="Edit"
-        android:src="@android:drawable/ic_menu_edit"
+        android:src="@drawable/ic_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,7 +40,6 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_white_background"
-        android:elevation="4dp"
         android:minHeight="48dp"
         android:padding="16dp"
         android:textAppearance="?attr/textAppearanceHeadline5"
@@ -64,7 +64,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/rounded_white_background"
-        android:elevation="4dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/note_full_title"

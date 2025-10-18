@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSurfaceContainer"
+    android:paddingTop="32dp"
     tools:context=".fragments.NewNoteFragment">
 
     <ImageButton
@@ -12,11 +13,12 @@
         style="?attr/actionButtonStyle"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_white_button_background"
+        android:layout_marginEnd="344dp"
         android:contentDescription="Cancel"
-        android:src="@android:drawable/ic_menu_close_clear_cancel" />
+        android:src="@drawable/ic_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/save_button"
@@ -25,9 +27,8 @@
         android:layout_height="48dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_white_button_background"
         android:contentDescription="Save"
-        android:src="@android:drawable/ic_menu_save"
+        android:src="@drawable/ic_save"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,9 +38,8 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_white_button_background"
         android:contentDescription="Scan"
-        android:src="@android:drawable/ic_menu_camera"
+        android:src="@drawable/ic_scan"
         app:layout_constraintEnd_toStartOf="@+id/save_button"
         app:layout_constraintTop_toTopOf="@+id/save_button" />
 
@@ -52,7 +52,6 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/rounded_white_background"
-        android:elevation="4dp"
         android:hint="Title"
         android:inputType="textCapSentences"
         android:minHeight="48dp"
@@ -69,7 +68,6 @@
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/rounded_white_background"
-        android:elevation="4dp"
         android:gravity="top"
         android:hint="Enter your note..."
         android:inputType="textMultiLine"
@@ -79,7 +77,7 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/new_note_title"
-        app:layout_constraintStart_toStartOf="@id/new_note_title"
+        app:layout_constraintStart_toStartOf="@+id/new_note_title"
         app:layout_constraintTop_toBottomOf="@+id/new_note_title"
         tools:text="This is where the user will type their note." />
 

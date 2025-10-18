@@ -15,10 +15,12 @@ import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.gonoteapp.fragments.FolderListFragment
 import com.example.gonoteapp.fragments.MainFragment
 import com.example.gonoteapp.fragments.NewNoteFragment
-import com.example.gonoteapp.fragments.SettingsFragment
+import com.example.gonoteapp.fragments.NoteFullViewFragment
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -30,12 +32,26 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
+                super.onFragmentResumed(fm, f)
+                if (f is NewNoteFragment || f is NoteFullViewFragment) {
+                    appBarLayout.visibility = View.GONE
+                    bottomNavigationView.visibility = View.GONE
+                } else {
+                    appBarLayout.visibility = View.VISIBLE
+                    bottomNavigationView.visibility = View.VISIBLE
+                }
+            }
+        }, true)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         toolbarTitle = findViewById(R.id.toolbar_title)
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val createButton: FloatingActionButton = findViewById(R.id.createbutton)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
