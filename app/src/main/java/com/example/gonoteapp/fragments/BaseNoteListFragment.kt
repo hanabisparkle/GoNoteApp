@@ -22,16 +22,13 @@ import com.example.gonoteapp.model.Note
 const val BASE_NOTE_LIST_FRAGMENT = "BaseNoteListFragment.kt"
 
 abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepository.OnDataChangeListener {
-
     protected lateinit var notesRecyclerView: RecyclerView
     protected lateinit var noteAdapter: NotePreviewAdapter
-
     private val selectedNotes = mutableSetOf<Note>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Listener for NEW notes
+        // Listener untuk pembuatan note baru oleh user
         setFragmentResultListener("new_note_request") { _, bundle ->
             val newTitle = bundle.getString("note_title_key") ?: "Untitled"
             val newContent = bundle.getString("note_content_key") ?: ""
@@ -43,7 +40,6 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate a generic layout with a RecyclerView
         return inflater.inflate(R.layout.fragment_base_note_list, container, false)
     }
 
@@ -184,17 +180,14 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
             .setMessage("Are you sure you want to delete this note?")
             .setPositiveButton("Delete") { _, _ ->
                 NoteRepository.deleteNote(note.id)
-                // Re-create the adapter and reset it on the RecyclerView to force a full refresh.
                 noteAdapter = NotePreviewAdapter(this)
                 notesRecyclerView.adapter = noteAdapter
                 loadNotes()
             }
             .setNegativeButton("Cancel") { _, _ ->
-                // If cancelled, just redraw the item to reset its appearance.
                 noteAdapter.notifyItemChanged(viewHolder.adapterPosition)
             }
             .setOnCancelListener {
-                // Also reset appearance if the dialog is dismissed by tapping outside.
                 noteAdapter.notifyItemChanged(viewHolder.adapterPosition)
             }
             .create()

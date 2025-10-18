@@ -6,15 +6,12 @@ import com.example.gonoteapp.model.Folder
 import com.example.gonoteapp.model.Note
 import androidx.fragment.app.setFragmentResult
 object NoteRepository {
-
     interface OnDataChangeListener {
         fun onDataChanged()
     }
-
     private const val NOTE_REPOSITORY = "NOTE_REPOSITORY"
     private val notes = mutableListOf<Note>()
     private val folders = mutableListOf<Folder>()
-
     private var nextId = 1L
     private var nextFolderId = 1L
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
@@ -32,8 +33,21 @@ class MainFragment : BaseNoteListFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val selectButton: Button = view.findViewById(R.id.select_button)
-        val deleteButton: Button = view.findViewById(R.id.delete_button)
-        val addToFolderButton: Button = view.findViewById(R.id.add_to_folder_button)
+        deleteButton = view.findViewById(R.id.delete_button)
+        addToFolderButton = view.findViewById(R.id.add_to_folder_button)
+
+        val searchView: SearchView = view.findViewById(R.id.search_view)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterNotes(newText)
+                return true
+            }
+        })
 
         selectButton.setOnClickListener {
             isSelectionMode = !isSelectionMode
@@ -58,6 +72,19 @@ class MainFragment : BaseNoteListFragment() {
 
     }
 
+    private fun filterNotes(query: String?) {
+        val allNotes = NoteRepository.getAllNotes()
+        if (query.isNullOrBlank()) {
+            noteAdapter.setData(allNotes)
+        } else {
+            val filteredNotes = allNotes.filter { note ->
+                note.title.contains(query, ignoreCase = true) ||
+                note.content.contains(query, ignoreCase = true)
+            }
+            noteAdapter.setData(filteredNotes)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -70,7 +97,7 @@ class MainFragment : BaseNoteListFragment() {
 
     private fun showFolderSelectDialog(selectedNotes: Set<Note>) {
         val folders = NoteRepository.getAllFolders()
-        if (!folders.isEmpty()) {
+        if (folders.isNotEmpty()) {
             AlertDialog.Builder(requireContext())
                 .setTitle("Select folder")
                 .setItems(folders.map { it.name }.toTypedArray()) { _, which ->
