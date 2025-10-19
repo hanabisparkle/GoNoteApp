@@ -6,38 +6,50 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gonoteapp.model.Folder
 
-// Using the corrected name: FolderViewHolder
+/**
+ * ViewHolder untuk menampilkan satu item folder dalam RecyclerView.
+ * Mengelola view untuk setiap item dan menangani interaksi pengguna.
+ */
 class FolderViewHolder(itemView: View, private val listener: OnFolderClickListener) : RecyclerView.ViewHolder(itemView) {
 
-    // Assuming you have these IDs in your folder_list_item.xml
+    // Mendefinisikan view yang ada di dalam layout item folder (folder_list_item.xml)
     private val folderName: TextView = itemView.findViewById(R.id.folder_name_textview)
     private val checkbox: CheckBox = itemView.findViewById(R.id.folder_checkbox)
 
+    /**
+     * Mengikat data folder ke view yang sesuai.
+     * Fungsi ini dipanggil oleh [FolderAdapter] untuk setiap item yang terlihat di layar.
+     *
+     * @param folder Data folder yang akan ditampilkan.
+     * @param isSelectionMode Status apakah mode seleksi sedang aktif.
+     * @param isSelected Status apakah item ini sedang diseleksi.
+     */
     fun bindFolderData(folder: Folder, isSelectionMode: Boolean, isSelected: Boolean) {
         folderName.text = folder.name
         checkbox.isChecked = isSelected
 
-        // Show/hide checkbox based on selection mode
+        // Tampilkan atau sembunyikan checkbox berdasarkan mode seleksi
         if (isSelectionMode) {
             checkbox.visibility = View.VISIBLE
         } else {
             checkbox.visibility = View.GONE
-            checkbox.isChecked = false // Reset state when not in selection mode
+            checkbox.isChecked = false // Reset status checkbox saat mode seleksi tidak aktif
         }
 
-        // Handle clicks on the entire item
+        // Menangani aksi klik pada seluruh item view
         itemView.setOnClickListener {
             if (isSelectionMode) {
-                // In selection mode, a click toggles the checkbox
+                // Jika dalam mode seleksi, klik pada item akan mengubah status checkbox
                 checkbox.isChecked = !checkbox.isChecked
             } else {
-                // Otherwise, it opens the folder
+                // Jika tidak, klik akan membuka folder (memanggil listener)
                 listener.onFolderClicked(folder)
             }
         }
 
-        // Listen for when the checkbox state changes
+        // Listener untuk memantau perubahan status checkbox
         checkbox.setOnCheckedChangeListener { _, isChecked ->
+            // Memberi tahu fragment (melalui adapter) bahwa status seleksi item ini berubah
             listener.onFolderSelected(folder, isChecked)
         }
     }

@@ -5,15 +5,21 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
-import com.example.gonoteapp.NoteRepository.getFolderById
 import com.example.gonoteapp.R
 import kotlin.properties.Delegates
 
+/**
+ * Fragment untuk menampilkan daftar catatan yang ada di dalam sebuah folder spesifik.
+ * Merupakan turunan dari [BaseNoteListFragment] dan mengimplementasikan `loadNotes`.
+ */
 class FolderNotesFragment : BaseNoteListFragment() {
 
     private lateinit var folderName: String
-    private var folderId by Delegates.notNull<Long>()
+    private var folderId by Delegates.notNull<Long>() // ID folder yang akan ditampilkan
 
+    /**
+     * Dipanggil saat fragment dibuat. Mengambil folderId dari arguments.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -21,41 +27,62 @@ class FolderNotesFragment : BaseNoteListFragment() {
         }
     }
 
+    /**
+     * Dipanggil setelah view dibuat. Mengatur judul toolbar dan tombol kembali.
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        folderName = getFolderById(folderId)?.name ?: "Unknown Folder"
+        folderName = NoteRepository.getFolderById(folderId)?.name ?: "Unknown Folder"
+        // Meminta MainActivity untuk memperbarui judul di toolbar.
         (activity as? MainActivity)?.updateTitle(folderName)
 
+        // Menampilkan tombol kembali (panah) di toolbar.
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.setNavigationIcon(R.drawable.ic_back)
         toolbar?.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack() // Kembali ke layar sebelumnya
         }
     }
 
     override fun onResume() {
         super.onResume()
-        // When we resume this fragment, ensure the title is set correctly.
+        // Pastikan judul toolbar benar saat fragment kembali ditampilkan.
         (activity as? MainActivity)?.updateTitle(folderName)
-        loadNotes()
     }
 
+    /**
+     * Dipanggil saat view dihancurkan. Membersihkan listener pada toolbar.
+     */
     override fun onDestroyView() {
         super.onDestroyView()
+        // Hapus ikon dan listener navigasi untuk mencegah kebocoran memori atau perilaku tak terduga.
         val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.navigationIcon = null
         toolbar?.setNavigationOnClickListener(null)
     }
 
+    /**
+     * Implementasi dari fungsi abstract di [BaseNoteListFragment].
+     * Memuat catatan dari [NoteRepository] yang sesuai dengan `folderId`.
+     */
     override fun loadNotes() {
-        // The implementation for this screen is to load notes for a specific folder
         val notes = NoteRepository.getNotesForFolder(folderId)
         noteAdapter.setData(notes)
+        // Menampilkan pesan jika tidak ada catatan di folder ini.
         updateEmptyViewVisibility(notes, R.string.empty_notes)
     }
 
+    /**
+     * Companion object untuk membuat instance baru dari fragment ini dengan cara yang aman.
+     * Ini adalah pola pabrik (factory pattern) yang direkomendasikan untuk fragment.
+     */
     companion object {
         private const val ARG_FOLDER_ID = "folder_id"
+
+        /**
+         * Membuat instance baru dari [FolderNotesFragment].
+         * @param folderId ID dari folder yang catatannya akan ditampilkan.
+         */
         fun newInstance(folderId: Long): FolderNotesFragment {
             val fragment = FolderNotesFragment()
             val args = Bundle()

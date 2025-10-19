@@ -10,14 +10,16 @@ import android.widget.CheckBox
 import android.widget.Toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import com.example.gonoteapp.MainActivity
-import com.example.gonoteapp.NotePreviewAdapter
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Note
 
-const val MAIN_FRAGMENT = "MainFragment.kt"
+/**
+ * Fragment utama yang ditampilkan saat aplikasi pertama kali dibuka.
+ * Menampilkan semua catatan dan menyediakan fungsionalitas pencarian serta multi-seleksi.
+ * Merupakan turunan dari [BaseNoteListFragment].
+ */
 class MainFragment : BaseNoteListFragment() {
 
     private var isSelectionMode = false
@@ -25,23 +27,25 @@ class MainFragment : BaseNoteListFragment() {
     private lateinit var addToFolderButton: Button
     private lateinit var selectAllCheckbox: CheckBox
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Gunakan layout khusus untuk halaman utama
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view, savedInstanceState) // Panggil implementasi dari BaseNoteListFragment
 
+        // Inisialisasi view yang spesifik untuk MainFragment
         val selectButton: Button = view.findViewById(R.id.select_button)
         deleteButton = view.findViewById(R.id.delete_button)
         addToFolderButton = view.findViewById(R.id.add_to_folder_button)
         selectAllCheckbox = view.findViewById(R.id.select_all_checkbox)
-
         val searchView: SearchView = view.findViewById(R.id.search_view)
+
+        // Setup listener untuk search view
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 searchView.clearFocus()
@@ -49,11 +53,12 @@ class MainFragment : BaseNoteListFragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filterNotes(newText)
+                filterNotes(newText) // Filter daftar catatan saat teks pencarian berubah
                 return true
             }
         })
 
+        // Menangani logika untuk mengaktifkan/menonaktifkan mode seleksi
         selectButton.setOnClickListener {
             isSelectionMode = !isSelectionMode
             noteAdapter.setSelectionMode(isSelectionMode)
@@ -67,77 +72,89 @@ class MainFragment : BaseNoteListFragment() {
                 addToFolderButton.visibility = View.GONE
                 selectAllCheckbox.visibility = View.GONE
                 selectAllCheckbox.isChecked = false
-            }
-        }
-
-        selectAllCheckbox.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                noteAdapter.selectAll()
-            } else {
                 noteAdapter.deselectAll()
             }
         }
 
+        // Menangani checkbox "Select All"
+        selectAllCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) noteAdapter.selectAll() else noteAdapter.deselectAll()
+        }
+
+        // Menangani klik tombol "Add to Folder"
         addToFolderButton.setOnClickListener {
-            Log.d(MAIN_FRAGMENT, "addToFolderButton.setOnClickListener() -> Adding to folder")
-            val selectedNotes = getSelectedNotes()
-            if (selectedNotes.isNotEmpty()){
+            val selectedNotes = noteAdapter.getSelectedNotes()
+            if (selectedNotes.isNotEmpty()) {
                 showFolderSelectDialog(selectedNotes)
             }
         }
 
+        // Menangani klik tombol "Delete"
         deleteButton.setOnClickListener {
-            val selectedNotes = getSelectedNotes()
+            val selectedNotes = noteAdapter.getSelectedNotes()
             if (selectedNotes.isNotEmpty()) {
                 showDeleteSelectedNotesDialog(selectedNotes)
             }
         }
-
     }
 
+    /**
+     * Memfilter daftar catatan berdasarkan query pencarian.
+     */
     private fun filterNotes(query: String?) {
         val allNotes = NoteRepository.getAllNotes()
         val notesToShow = if (query.isNullOrBlank()) {
-            allNotes
+            allNotes // Tampilkan semua jika query kosong
         } else {
-            allNotes.filter { note ->
-                note.title.contains(query, ignoreCase = true) ||
-                        note.content.contains(query, ignoreCase = true)
+            // Filter berdasarkan judul atau konten
+            allNotes.filter {
+                it.title.contains(query, ignoreCase = true) || it.content.contains(query, ignoreCase = true)
             }
         }
         noteAdapter.setData(notesToShow)
-        updateEmptyViewVisibility(notesToShow, R.string.empty_notes)
+        updateEmptyViewVisibility(notesToShow, R.string.empty_search_result) // Tampilkan pesan jika hasil pencarian kosong
     }
-
 
     override fun onResume() {
         super.onResume()
-        (activity as? MainActivity)?.updateTitle("Home")
+        (activity as? MainActivity)?.updateTitle("Home") // Set judul toolbar
     }
 
+    /**
+     * Implementasi dari fungsi abstract di [BaseNoteListFragment].
+     * Memuat semua catatan dari [NoteRepository].
+     */
     override fun loadNotes() {
         val allNotes = NoteRepository.getAllNotes()
         noteAdapter.setData(allNotes)
-        updateEmptyViewVisibility(allNotes, R.string.empty_notes)
+        updateEmptyViewVisibility(allNotes, R.string.empty_notes) // Tampilkan pesan jika tidak ada catatan sama sekali
     }
 
+    /**
+     * Menampilkan dialog konfirmasi untuk menghapus catatan yang diseleksi.
+     */
     private fun showDeleteSelectedNotesDialog(selectedNotes: Set<Note>){
-        val options = arrayOf("Delete", "Cancel")
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete Note")
             .setMessage("Are you sure you want to delete these notes?")
             .setPositiveButton("Delete") { _, _ ->
-                for (note in selectedNotes){
-                    NoteRepository.deleteNote(note.id)
-                }
-                notesRecyclerView.adapter = noteAdapter
-                loadNotes()
+                selectedNotes.forEach { NoteRepository.deleteNote(it.id) }
+                loadNotes() // Muat ulang daftar
+                // Keluar dari mode seleksi setelah selesai
+                isSelectionMode = false
+                noteAdapter.setSelectionMode(false)
+                deleteButton.visibility = View.GONE
+                addToFolderButton.visibility = View.GONE
+                selectAllCheckbox.visibility = View.GONE
+                selectAllCheckbox.isChecked = false
             }
             .setNegativeButton("Cancel", null)
-            .create()
             .show()
     }
 
+    /**
+     * Menampilkan dialog untuk memilih folder tujuan saat memindahkan catatan.
+     */
     private fun showFolderSelectDialog(selectedNotes: Set<Note>) {
         val folders = NoteRepository.getAllFolders()
         if (folders.isNotEmpty()) {
@@ -145,22 +162,20 @@ class MainFragment : BaseNoteListFragment() {
                 .setTitle("Select folder")
                 .setItems(folders.map { it.name }.toTypedArray()) { _, which ->
                     val selectedFolder = folders[which]
-
-                    for (note in selectedNotes) {
-                        if (note.folderId != selectedFolder.id){
-                            note.folderId = selectedFolder.id
-
-                        } else {
-                            Log.d(MAIN_FRAGMENT, "showFolderSelectDialog() -> Note already in folder")
-                        }
-                    }
-                    Log.d(MAIN_FRAGMENT, "showFolderSelectDialog() -> Notes added to folder")
+                    selectedNotes.forEach { it.folderId = selectedFolder.id }
+                    Toast.makeText(requireContext(), "Notes moved to ${selectedFolder.name}", Toast.LENGTH_SHORT).show()
+                    // Keluar dari mode seleksi setelah selesai
+                    isSelectionMode = false
+                    noteAdapter.setSelectionMode(false)
+                    deleteButton.visibility = View.GONE
+                    addToFolderButton.visibility = View.GONE
+                    selectAllCheckbox.visibility = View.GONE
+                    selectAllCheckbox.isChecked = false
+                    loadNotes()
                 }
                 .show()
-            Toast.makeText(requireContext(), "Notes added to folder", Toast.LENGTH_LONG).show()
         } else {
-            Log.d(MAIN_FRAGMENT, "showFolderSelectDialog() -> No folders found")
-            Toast.makeText(requireContext(), "No folders to add to. Create a folder first.", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "No folders found. Create a folder first.", Toast.LENGTH_LONG).show()
         }
     }
 }
