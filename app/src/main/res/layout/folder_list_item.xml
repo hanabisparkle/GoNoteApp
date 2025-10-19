@@ -73,6 +73,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:visibility="gone"
+            app:buttonTint="@color/seaGreenDark"
+            app:checkMarkTint="@android:color/white"
             tools:visibility="visible"/>
 
     </RelativeLayout>

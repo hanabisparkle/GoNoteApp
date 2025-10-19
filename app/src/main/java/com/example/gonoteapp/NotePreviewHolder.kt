@@ -49,15 +49,18 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
             if (isSelectionMode) {
                 // Jika mode seleksi, klik akan mengubah status checkbox
                 checkbox.isChecked = !checkbox.isChecked
+                // BARIS YANG HILANG: Memberi tahu listener bahwa status seleksi telah berubah
+                listener.onNoteSelected(note, checkbox.isChecked)
             } else {
                 // Jika tidak, klik akan membuka detail catatan
                 listener.onNoteClicked(note)
             }
         }
 
-        // Listener untuk memantau perubahan status checkbox
+        // Listener ini menangani klik LANGSUNG pada checkbox.
+        // onClickListener di atas menangani klik pada seluruh baris.
         checkbox.setOnCheckedChangeListener { _, isChecked ->
-            // Memberi tahu fragment bahwa status seleksi item ini berubah
+             // Memberi tahu fragment bahwa status seleksi item ini berubah
             listener.onNoteSelected(note, isChecked)
         }
     }

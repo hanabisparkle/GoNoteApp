@@ -38,9 +38,6 @@ class NotePreviewAdapter(
      */
     fun setSelectionMode(isActive: Boolean) {
         selectionMode = isActive
-        if (!isActive) {
-            selectedNotes.clear() // Hapus seleksi saat mode berakhir
-        }
         notifyDataSetChanged() // Gambar ulang daftar
     }
 

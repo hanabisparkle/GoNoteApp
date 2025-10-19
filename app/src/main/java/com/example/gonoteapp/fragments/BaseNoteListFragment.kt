@@ -28,7 +28,6 @@ import com.example.gonoteapp.model.Note
 abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener {
     protected lateinit var notesRecyclerView: RecyclerView
     protected lateinit var noteAdapter: NotePreviewAdapter
-    private val selectedNotes = mutableSetOf<Note>()
     private var emptyView: TextView? = null // Tampilan untuk saat daftar kosong
 
     override fun onCreateView(
@@ -71,22 +70,14 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener {
 
     /**
      * Dipanggil saat status seleksi sebuah catatan berubah (melalui checkbox).
-     * Menambah atau menghapus catatan dari daftar `selectedNotes`.
+     * Mendelegasikan logika penambahan/penghapusan ke adapter.
      */
     override fun onNoteSelected(note: Note, isSelected: Boolean) {
         if (isSelected) {
-            selectedNotes.add(note)
+            noteAdapter.addSelected(note)
         } else {
-            selectedNotes.remove(note)
+            noteAdapter.removeSelected(note)
         }
-    }
-
-    /**
-     * Mengembalikan daftar catatan yang sedang diseleksi.
-     * Dipanggil oleh [MainFragment] untuk aksi massal seperti hapus atau pindah folder.
-     */
-    fun getSelectedNotes(): Set<Note> {
-        return selectedNotes
     }
 
     /**
