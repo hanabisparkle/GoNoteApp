@@ -2,7 +2,7 @@ package com.example.gonoteapp.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.NoteRepository.getFolderById
@@ -25,8 +25,12 @@ class FolderNotesFragment : BaseNoteListFragment() {
         super.onViewCreated(view, savedInstanceState)
         folderName = getFolderById(folderId)?.name ?: "Unknown Folder"
         (activity as? MainActivity)?.updateTitle(folderName)
-        val activity = requireActivity() as AppCompatActivity
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.setNavigationIcon(R.drawable.ic_back)
+        toolbar?.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
     override fun onResume() {
@@ -38,8 +42,9 @@ class FolderNotesFragment : BaseNoteListFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val activity = requireActivity() as AppCompatActivity
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        val toolbar = activity?.findViewById<Toolbar>(R.id.toolbar)
+        toolbar?.navigationIcon = null
+        toolbar?.setNavigationOnClickListener(null)
     }
 
     override fun loadNotes() {

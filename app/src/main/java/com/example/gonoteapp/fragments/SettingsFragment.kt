@@ -1,12 +1,13 @@
-package com.example.gonoteapp
+package com.example.gonoteapp.fragments
 
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.gonoteapp.MainActivity
+import com.example.gonoteapp.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
@@ -61,7 +62,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     }
 
     private fun showLogoutDialog() {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Log Out")
             .setMessage("Are you sure you want to log out?")
             .setPositiveButton("Log Out") { _, _ ->

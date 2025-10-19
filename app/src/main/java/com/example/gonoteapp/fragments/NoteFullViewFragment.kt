@@ -1,6 +1,7 @@
 package com.example.gonoteapp.fragments
 
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,6 +46,7 @@ class NoteFullViewFragment : Fragment(), NoteRepository.OnDataChangeListener {
         super.onViewCreated(view, savedInstanceState)
         titleView = view.findViewById(R.id.note_full_title)
         contentView = view.findViewById(R.id.note_full_content)
+        contentView.movementMethod = ScrollingMovementMethod.getInstance()
         timestampView = view.findViewById(R.id.note_full_timestamp)
 
         markwon = Markwon.create(requireContext()) // markwon sebagai library yang digunakan

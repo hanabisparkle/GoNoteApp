@@ -4,7 +4,7 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_note"
         android:title="Home"
-        android:drawableTint="@android:color/black"/>
+        android:backgroundTint="@color/black"/>
     <item
         android:id="@+id/navigation_folders"
         android:icon="@drawable/ic_folder"

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.FolderNotesFragment">
+    tools:context=".fragments.FolderNotesFragment"
+    android:background="@color/lightbluishgrey">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notes_in_folder_recyclerview"

@@ -4,24 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsFragment"
-    android:background="@android:color/white">
+    tools:context=".fragments.SettingsFragment"
+    android:background="@color/colorSurfaceContainer">
+    >
 
     <LinearLayout
+        android:layout_marginTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        >
         <TextView
-            style="?attr/textAppearanceLabelMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
             android:textSize="16sp"
             android:text="@string/settings_account_header"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="@color/seaGreenDark"
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:id="@+id/account_section"
@@ -72,14 +75,14 @@
 
         <!-- Backup & Sync Section -->
         <TextView
-            style="?attr/textAppearanceLabelMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
             android:text="@string/settings_backupsync_header"
             android:textSize="16sp"
-            android:textColor="?attr/colorPrimary" />
+            android:textColor="@color/seaGreenDark"
+            android:textStyle="bold" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/backup_switch"
@@ -90,10 +93,12 @@
             android:enabled="false"
             android:paddingStart="12dp"
             android:paddingEnd="0dp"
-            android:text="Back up to Google Drive"
+            android:text="@string/settings_backupsync_gdrive"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             tools:checked="true"
-            tools:enabled="true" />
+            tools:enabled="true"
+            app:thumbTint="@color/seaGreenDark"
+            app:trackTint="@color/seaGreenLight"/>
 
         <TextView
             android:id="@+id/backup_status_subtitle"
@@ -101,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="72dp"
             android:layout_marginTop="-4dp"
-            android:text="Log in to enable backup"
+            android:text="@string/backupsync_login_prompt"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?android:attr/textColorSecondary" />
 

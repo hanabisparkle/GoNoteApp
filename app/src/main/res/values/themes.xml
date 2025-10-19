@@ -3,6 +3,11 @@
     <style name="Base.Theme.GoNoteApp" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="materialAlertDialogTheme">@style/MyDialogStyle</item>
+    </style>
+
+    <style name="FABstyle" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorAccent">@color/seaGreenDark</item>
     </style>
 
     <style name="CheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
@@ -21,6 +26,11 @@
         <item name="android:color">#A354C3AB</item>
     </style>
 
-
+    <!-- Custom Dialog Style -->
+    <style name="MyDialogStyle" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:background">@drawable/dialog_background</item>
+        <item name="colorOnSurface">@color/black</item> <!-- For title and message text -->
+        <item name="colorPrimary">@color/seaGreenDark</item> <!-- For buttons -->
+    </style>
 
 </resources>

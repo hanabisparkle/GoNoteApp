@@ -6,8 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import com.example.gonoteapp.MainActivity
@@ -22,6 +23,7 @@ class MainFragment : BaseNoteListFragment() {
     private var isSelectionMode = false
     private lateinit var deleteButton: Button
     private lateinit var addToFolderButton: Button
+    private lateinit var selectAllCheckbox: CheckBox
 
 
     override fun onCreateView(
@@ -37,6 +39,7 @@ class MainFragment : BaseNoteListFragment() {
         val selectButton: Button = view.findViewById(R.id.select_button)
         deleteButton = view.findViewById(R.id.delete_button)
         addToFolderButton = view.findViewById(R.id.add_to_folder_button)
+        selectAllCheckbox = view.findViewById(R.id.select_all_checkbox)
 
         val searchView: SearchView = view.findViewById(R.id.search_view)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -58,9 +61,20 @@ class MainFragment : BaseNoteListFragment() {
             if (isSelectionMode) {
                 deleteButton.visibility = View.VISIBLE
                 addToFolderButton.visibility = View.VISIBLE
+                selectAllCheckbox.visibility = View.VISIBLE
             } else {
                 deleteButton.visibility = View.GONE
                 addToFolderButton.visibility = View.GONE
+                selectAllCheckbox.visibility = View.GONE
+                selectAllCheckbox.isChecked = false
+            }
+        }
+
+        selectAllCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                noteAdapter.selectAll()
+            } else {
+                noteAdapter.deselectAll()
             }
         }
 
@@ -109,7 +123,7 @@ class MainFragment : BaseNoteListFragment() {
 
     private fun showDeleteSelectedNotesDialog(selectedNotes: Set<Note>){
         val options = arrayOf("Delete", "Cancel")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete Note")
             .setMessage("Are you sure you want to delete these notes?")
             .setPositiveButton("Delete") { _, _ ->
@@ -127,7 +141,7 @@ class MainFragment : BaseNoteListFragment() {
     private fun showFolderSelectDialog(selectedNotes: Set<Note>) {
         val folders = NoteRepository.getAllFolders()
         if (folders.isNotEmpty()) {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Select folder")
                 .setItems(folders.map { it.name }.toTypedArray()) { _, which ->
                     val selectedFolder = folders[which]

@@ -1,25 +1,24 @@
 package com.example.gonoteapp
 
 import android.os.Bundle
-import android.text.Layout
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.gonoteapp.fragments.FolderListFragment
 import com.example.gonoteapp.fragments.MainFragment
 import com.example.gonoteapp.fragments.NewNoteFragment
 import com.example.gonoteapp.fragments.NoteFullViewFragment
+import com.example.gonoteapp.fragments.SettingsFragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -29,20 +28,32 @@ class MainActivity : AppCompatActivity() {
     private lateinit var toolbarTitle: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
         val appBarLayout = findViewById<AppBarLayout>(R.id.app_bar_layout)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val createButton: FloatingActionButton = findViewById(R.id.createbutton)
+
         supportFragmentManager.registerFragmentLifecycleCallbacks(object : FragmentManager.FragmentLifecycleCallbacks() {
             override fun onFragmentResumed(fm: FragmentManager, f: Fragment) {
                 super.onFragmentResumed(fm, f)
+
+                // Manage App Bar and Bottom Navigation visibility
                 if (f is NewNoteFragment || f is NoteFullViewFragment) {
                     appBarLayout.visibility = View.GONE
                     bottomNavigationView.visibility = View.GONE
                 } else {
                     appBarLayout.visibility = View.VISIBLE
                     bottomNavigationView.visibility = View.VISIBLE
+                }
+
+                // Manage Create Button visibility
+                if (f is NoteFullViewFragment || f is NewNoteFragment || f is SettingsFragment) {
+                    createButton.visibility = View.GONE
+                } else {
+                    createButton.visibility = View.VISIBLE
                 }
             }
         }, true)
@@ -52,24 +63,20 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         toolbarTitle = findViewById(R.id.toolbar_title)
-        val createButton: FloatingActionButton = findViewById(R.id.createbutton)
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
             when (item.itemId) {
                 R.id.navigation_home -> {
                     selectedFragment = MainFragment()
-                    createButton.visibility = View.VISIBLE
                     onFolderSelected(null)
                 }
                 R.id.navigation_folders -> {
                     selectedFragment = FolderListFragment()
-                    createButton.visibility = View.VISIBLE
                     onFolderSelected(null)
                 }
                 R.id.navigation_settings -> {
                     selectedFragment = SettingsFragment()
-                    createButton.visibility = View.GONE
                 }
             }
             if (selectedFragment != null) {
@@ -105,7 +112,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showCreateDialog() {
         val options = arrayOf("New Note", "New Folder")
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("Create")
             .setItems(options) { _, which ->
                 when (which) {
@@ -138,7 +145,7 @@ class MainActivity : AppCompatActivity() {
             addView(editText)
         }
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle("New Folder")
             .setView(layout)
             .setPositiveButton("Create") { _, _ ->

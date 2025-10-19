@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.appcompat.app.AlertDialog
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,31 +20,47 @@ import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.OnFolderClickListener
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Folder
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnDataChangeListener {
     private lateinit var foldersRecyclerView: RecyclerView
     private lateinit var foldersAdapter: FolderAdapter
     private lateinit var deleteButton: Button
+    private lateinit var selectAllCheckbox: CheckBox
+    private lateinit var emptyView: TextView
     private var isSelectionMode = false
     private val selectedFolders = mutableSetOf<Folder>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         foldersRecyclerView = view.findViewById(R.id.folders_recycler_view)
+        emptyView = view.findViewById(R.id.folder_empty_view)
         foldersAdapter = FolderAdapter(this)
         setupRecyclerView()
 
         val selectButton: Button = view.findViewById(R.id.folder_select_button)
         deleteButton = view.findViewById(R.id.folder_delete_button)
+        selectAllCheckbox = view.findViewById(R.id.select_all_checkbox)
 
         selectButton.setOnClickListener {
             isSelectionMode = !isSelectionMode
             foldersAdapter.setSelectionMode(isSelectionMode)
             if (isSelectionMode) {
                 deleteButton.visibility = View.VISIBLE
+                selectAllCheckbox.visibility = View.VISIBLE
             } else {
                 deleteButton.visibility = View.GONE
+                selectAllCheckbox.visibility = View.GONE
+                selectAllCheckbox.isChecked = false
                 selectedFolders.clear()
+            }
+        }
+
+        selectAllCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                foldersAdapter.selectAll()
+            } else {
+                foldersAdapter.deselectAll()
             }
         }
 
@@ -65,15 +82,15 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-//                val position = viewHolder.adapterPosition
-//                val folder = foldersAdapter.getFolderAt(position)
-//
-//                if (direction == ItemTouchHelper.LEFT) {
-//                    showDeleteFolderConfirmationDialog(folder, viewHolder)
-//                } else {
-//                    showEditFolderDialog(folder)
-//                    foldersAdapter.notifyItemChanged(position)
-//                }
+                val position = viewHolder.adapterPosition
+                val folder = foldersAdapter.getFolderAt(position)
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    showDeleteFolderConfirmationDialog(folder, viewHolder)
+                } else {
+                    showEditFolderDialog(folder)
+                    foldersAdapter.notifyItemChanged(position)
+                }
             }
             override fun onChildDraw(
                 c: Canvas,
@@ -136,7 +153,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
             setText(folder.name)
         }
 
-        AlertDialog.Builder(context)
+        MaterialAlertDialogBuilder(context)
             .setTitle("Edit Folder Name")
             .setView(editText)
             .setPositiveButton("Save") { _, _ ->
@@ -150,7 +167,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
     }
 
     private fun showDeleteFolderConfirmationDialog(folder: Folder, viewHolder: RecyclerView.ViewHolder) {
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete Folder")
             .setMessage("Are you sure you want to delete '${folder.name}'? Notes inside will become uncategorized.")
             .setPositiveButton("Delete") { _, _ ->
@@ -160,14 +177,14 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
             .setNegativeButton("Cancel") { _, _ ->
                 foldersAdapter.notifyItemChanged(viewHolder.adapterPosition)
             }
-            .setOnCancelListener { 
+            .setOnCancelListener {
                 foldersAdapter.notifyItemChanged(viewHolder.adapterPosition)
             }
             .show()
     }
 
     private fun showDeleteSelectedFoldersDialog(selectedFolders: Set<Folder>){
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete Selected Folders")
             .setMessage("Are you sure you want to permanently delete the selected folders? Any notes within them will be uncategorized.")
             .setPositiveButton("Delete") { _, _ ->
@@ -195,6 +212,13 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
     private fun loadFolders() {
         val folders = NoteRepository.getAllFolders()
         foldersAdapter.setData(folders)
+        if (folders.isEmpty()) {
+            foldersRecyclerView.visibility = View.GONE
+            emptyView.visibility = View.VISIBLE
+        } else {
+            foldersRecyclerView.visibility = View.VISIBLE
+            emptyView.visibility = View.GONE
+        }
     }
 
     override fun onCreateView(
@@ -232,7 +256,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener, NoteRepository.OnD
             addView(editText)
         }
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("New Folder")
             .setView(layout)
             .setPositiveButton("Create") { _, _ ->

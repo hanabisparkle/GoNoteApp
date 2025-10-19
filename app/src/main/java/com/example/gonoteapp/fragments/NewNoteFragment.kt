@@ -8,15 +8,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.gonoteapp.NewNoteViewModel
 import com.example.gonoteapp.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.noties.markwon.Markwon
 import io.noties.markwon.editor.MarkwonEditor
 import io.noties.markwon.editor.MarkwonEditorTextWatcher
-import java.util.concurrent.Executors
 
 class NewNoteFragment : Fragment() {
 
@@ -82,7 +81,7 @@ class NewNoteFragment : Fragment() {
 
     private fun showImageSourceDialog() {
         val options = arrayOf("Camera", "Gallery")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Choose Image Source")
             .setItems(options) { _, which ->
                 when (which) {

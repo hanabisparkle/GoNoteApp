@@ -49,6 +49,17 @@ class FolderAdapter(
         selectedFolders.remove(folder)
     }
 
+    fun selectAll() {
+        selectedFolders.clear()
+        selectedFolders.addAll(folders)
+        notifyDataSetChanged()
+    }
+
+    fun deselectAll() {
+        selectedFolders.clear()
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.folder_list_item, parent, false)
@@ -57,10 +68,16 @@ class FolderAdapter(
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
         // Pass the data and selection state to the ViewHolder
-        holder.bindFolderData(folders[position], selectionMode)
+        val folder = folders[position]
+        val isSelected = selectedFolders.contains(folder)
+        holder.bindFolderData(folder, selectionMode, isSelected)
     }
 
     override fun getItemCount(): Int {
         return folders.size
+    }
+    
+    fun getFolderAt(position: Int): Folder {
+        return folders[position]
     }
 }

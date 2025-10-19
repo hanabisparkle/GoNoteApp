@@ -5,6 +5,8 @@
     android:id="@+id/folder_item_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
     android:padding="8dp">
 
     <!-- Background for Delete Action (Swipe Left) -->
@@ -51,6 +53,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/list_item_background"
+        android:duplicateParentState="true"
         android:padding="16dp">
 
         <TextView

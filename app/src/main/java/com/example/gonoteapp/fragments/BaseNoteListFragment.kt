@@ -49,7 +49,7 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
-        emptyView = view.findViewById(R.id.empty_view)
+        emptyView = view.findViewById(R.id.note_empty_view)
         noteAdapter = NotePreviewAdapter(this)
         setupRecyclerView()
         loadNotes()

@@ -19,36 +19,32 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
     private val checkbox: CheckBox = itemView.findViewById(R.id.note_checkbox)
 
 
-    fun bindNoteData(note: Note, isSelectionMode: Boolean) {
+    fun bindNoteData(note: Note, isSelectionMode: Boolean, isSelected: Boolean) {
         title.text = note.title
         content.text = note.content
         timestamp.text = formatDate(note.timestamp)
 
-        // untuk select mode di mainfragment
         if (isSelectionMode) {
             checkbox.visibility = View.VISIBLE
+            checkbox.isChecked = isSelected
         } else {
             checkbox.visibility = View.GONE
+            checkbox.isChecked = false
         }
 
         itemView.setOnClickListener {
-            if (!isSelectionMode) {
+            if (isSelectionMode) {
+                checkbox.isChecked = !checkbox.isChecked
+            } else {
                 listener.onNoteClicked(note)
             }
         }
-        // jika note diselect akan dimasukan ke list selectedNotes
-        checkbox.setOnCheckedChangeListener {
-            _, isChecked ->
-            if (isChecked) {
-                listener.onNoteSelected(note, isSelected = true)
-                Log.d(NOTE_PREVIEW_HOLDER, "bindData() -> Note selected")
-            } else {
-                listener.onNoteSelected(note, isSelected = false)
-                Log.d(NOTE_PREVIEW_HOLDER, "bindData() -> Note unselected")
 
-            }
+        checkbox.setOnCheckedChangeListener { _, isChecked ->
+            listener.onNoteSelected(note, isChecked)
         }
     }
+    
     private fun formatDate(millis: Long): String {
         val formatter = SimpleDateFormat("MMM dd", Locale.getDefault())
         return formatter.format(Date(millis))

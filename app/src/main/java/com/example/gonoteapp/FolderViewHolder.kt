@@ -13,8 +13,9 @@ class FolderViewHolder(itemView: View, private val listener: OnFolderClickListen
     private val folderName: TextView = itemView.findViewById(R.id.folder_name_textview)
     private val checkbox: CheckBox = itemView.findViewById(R.id.folder_checkbox)
 
-    fun bindFolderData(folder: Folder, isSelectionMode: Boolean) {
+    fun bindFolderData(folder: Folder, isSelectionMode: Boolean, isSelected: Boolean) {
         folderName.text = folder.name
+        checkbox.isChecked = isSelected
 
         // Show/hide checkbox based on selection mode
         if (isSelectionMode) {
