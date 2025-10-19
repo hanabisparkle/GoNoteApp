@@ -5,6 +5,10 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
+    <style name="CheckboxStyle" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="colorAccent">@color/seaGreenDark</item>
+    </style>
+
     <style name="Theme.GoNoteApp" parent="Base.Theme.GoNoteApp" />
 
     <style name="App.Custom.SearchView" parent="Widget.AppCompat.SearchView">

@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.NoteRepository.getFolderById
+import com.example.gonoteapp.R
 import kotlin.properties.Delegates
 
 class FolderNotesFragment : BaseNoteListFragment() {
@@ -32,6 +33,7 @@ class FolderNotesFragment : BaseNoteListFragment() {
         super.onResume()
         // When we resume this fragment, ensure the title is set correctly.
         (activity as? MainActivity)?.updateTitle(folderName)
+        loadNotes()
     }
 
     override fun onDestroyView() {
@@ -42,7 +44,9 @@ class FolderNotesFragment : BaseNoteListFragment() {
 
     override fun loadNotes() {
         // The implementation for this screen is to load notes for a specific folder
-        noteAdapter.setData(NoteRepository.getNotesForFolder(folderId))
+        val notes = NoteRepository.getNotesForFolder(folderId)
+        noteAdapter.setData(notes)
+        updateEmptyViewVisibility(notes, R.string.empty_notes)
     }
 
     companion object {

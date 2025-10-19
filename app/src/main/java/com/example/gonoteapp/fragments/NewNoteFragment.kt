@@ -21,7 +21,6 @@ import java.util.concurrent.Executors
 class NewNoteFragment : Fragment() {
 
     private val viewModel: NewNoteViewModel by viewModels()
-
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
             appendOcrDummyText()
@@ -29,9 +28,7 @@ class NewNoteFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_note, container, false)
     }
 
@@ -46,44 +43,38 @@ class NewNoteFragment : Fragment() {
 
         val folderName = arguments?.getString("FOLDER_NAME")
 
-        // --- MARKWON IMPLEMENTATION START ---
-
+        // --- MARKWON --- (bisa highlight syntax markdown secara real time)
         val markwon = Markwon.create(requireContext())
         val editor = MarkwonEditor.create(markwon)
         contentEditText.addTextChangedListener(
             MarkwonEditorTextWatcher.withProcess(editor)
         )
-
-        // --- MARKWON IMPLEMENTATION END ---
+        // --- MARKWON ---
 
         val noteIdToEdit = arguments?.getLong("NOTE_ID_TO_EDIT", -1L) ?: -1L
         viewModel.loadNote(noteIdToEdit)
 
-
+        // Observasi perubahan pada note dari ViewModel
         viewModel.note.observe(viewLifecycleOwner) { note ->
             if (note != null) {
                 titleEditText.setText(note.title)
                 contentEditText.setText(note.content)
             }
         }
-
         viewModel.navigateBack.observe(viewLifecycleOwner) { navigate ->
             if (navigate) {
                 parentFragmentManager.popBackStack()
                 viewModel.onNavigateBackComplete()
             }
         }
-
         scanButton.setOnClickListener {
             showImageSourceDialog()
         }
-
         saveButton.setOnClickListener {
             val title = titleEditText.text.toString()
             val content = contentEditText.text.toString()
             viewModel.saveNote(title, content, folderName)
         }
-
         cancelButton.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -106,7 +97,7 @@ class NewNoteFragment : Fragment() {
             .show()
     }
 
-    private fun appendOcrDummyText() {
+    private fun appendOcrDummyText() { // text dummy untuk hasil text scanning dari model ML nanti
         val contentEditText: EditText = view?.findViewById(R.id.new_note_content) ?: return
         val currentText = contentEditText.text.toString()
         val newText = if (currentText.isEmpty()) {

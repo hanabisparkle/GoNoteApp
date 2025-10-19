@@ -12,4 +12,14 @@
         android:clipToPadding="false"
         android:padding="8dp" />
 
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/empty_notes"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textSize="18sp" />
+
 </FrameLayout>

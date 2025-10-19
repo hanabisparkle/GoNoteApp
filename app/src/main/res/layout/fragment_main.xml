@@ -30,7 +30,7 @@
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:gravity="right"
-        app:layout_constraintTop_toBottomOf="@id/search_view"
+        app:layout_constraintTop_toBottomOf="@+id/search_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:paddingStart="8dp"
@@ -67,8 +67,6 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/black"
             android:text="Select" />
-
-
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -84,6 +82,17 @@
         app:layout_constraintVertical_bias="1.0"
         tools:listitem="@layout/note_preview" />
 
-
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/empty_notes"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

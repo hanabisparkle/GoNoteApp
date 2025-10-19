@@ -15,6 +15,7 @@ object NoteRepository {
     private var nextId = 1L
     private var nextFolderId = 1L
 
+    // Data dummy yang di-hard code
     init {
         val folder1 = Folder(nextFolderId++, "Personal")
         val folder2 = Folder(nextFolderId++, "Work")
@@ -29,19 +30,16 @@ object NoteRepository {
         notes.addAll(initialNotes)
     }
 
-    fun getAllFolders(): List<Folder> {
-        for (f in folders) {
-            f.noteCount = notes.count { it.folderId == f.id }
-            Log.d(NOTE_REPOSITORY, "getAllFolders() -> Folder Name: ${f.name}, Note Count: ${f.noteCount}")
-        }
-        return folders.toList()
-    }
+    // FUNCTION
+
+    // CRUD note & folder
+
+    // mengambil/memproses/mengfilter note & folder
 
     fun addFolder(name: String) {
         folders.add(Folder(nextFolderId++, name))
         Log.d(NOTE_REPOSITORY, "addFolder() -> Folder Name: ${name}")
     }
-
     fun addNote(title: String, content: String, folderName: String? = null) {
         val folderId = folderName?.let { name ->
             folders.find { it.name == name }?.id
@@ -58,25 +56,17 @@ object NoteRepository {
         Log.d(NOTE_REPOSITORY, "addNote() -> Note added to folderId: $folderId")
     }
 
-    fun updateFolder(id: Long, newName: String) {
-        val folderToUpdate = getFolderById(id)
-        folderToUpdate?.let {
-            it.name = newName
-        }
-        Log.d(NOTE_REPOSITORY, "updateFolder() -> Folder has been updated")
-    }
-
-    fun deleteFolder(id: Long) {
-        val folderToDelete = getFolderById(id)
-        folderToDelete?.let {
-            folders.remove(it)
-        }
-        Log.d(NOTE_REPOSITORY, "deleteFolder() -> Folder has been deleted")
-    }
-
+    // mengambil semua note & folder
     fun getAllNotes(): List<Note> {
         Log.d(NOTE_REPOSITORY, "getAllNotes()")
         return notes.toList()
+    }
+    fun getAllFolders(): List<Folder> {
+        for (f in folders) {
+            f.noteCount = notes.count { it.folderId == f.id }
+            Log.d(NOTE_REPOSITORY, "getAllFolders() -> Folder Name: ${f.name}, Note Count: ${f.noteCount}")
+        }
+        return folders.toList()
     }
 
     fun getNoteById(id: Long): Note? {
@@ -89,6 +79,7 @@ object NoteRepository {
         return folders.find { it.id == id }
     }
 
+    // ambil semua note yang ada di dalam folder
     fun getNotesForFolder(folderId: Long): List<Note> {
         val folder = folders.find { it.id == folderId }
         Log.d(NOTE_REPOSITORY, "getNotesForFolder()")
@@ -116,7 +107,21 @@ object NoteRepository {
         }
         Log.d(NOTE_REPOSITORY, "updateNote() -> Note has been updated")
     }
+    fun updateFolder(id: Long, newName: String) {
+        val folderToUpdate = getFolderById(id)
+        folderToUpdate?.let {
+            it.name = newName
+        }
+        Log.d(NOTE_REPOSITORY, "updateFolder() -> Folder has been updated")
+    }
 
+    fun deleteFolder(id: Long) {
+        val folderToDelete = getFolderById(id)
+        folderToDelete?.let {
+            folders.remove(it)
+        }
+        Log.d(NOTE_REPOSITORY, "deleteFolder() -> Folder has been deleted")
+    }
     fun deleteNote(id: Long) {
         val noteToDelete = getNoteById(id)
         noteToDelete?.let {

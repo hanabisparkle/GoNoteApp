@@ -2,4 +2,14 @@
     <string name="app_name">GoNoteApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="settings_account_header">ACCOUNT</string>
+    <string name="settings_account_login">Log in</string>
+    <string name="settings_account_login_prompt">Log in to back up and sync notes</string>
+    <string name="settings_email">elizalawis@gmail.com</string>
+    <string name="settings_username">Eli93650</string>
+    <string name="settings_backupsync_header">BACKUP AND SYNC</string>
+    <string name="settings_backupsync_gdrive">Backup to Google Drive</string>
+    <string name="backupsync_login_prompt">Log in to enable backup</string>
+    <string name="empty_notes">No notes found</string>
+    <string name="empty_folders">No folders found</string>
 </resources>

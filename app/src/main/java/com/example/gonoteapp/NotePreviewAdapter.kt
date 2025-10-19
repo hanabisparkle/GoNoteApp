@@ -9,19 +9,21 @@ interface OnNoteClickListener {
     fun onNoteClicked(note: Note)
     fun onNoteSelected(note: Note, isSelected: Boolean)
 }
-
 class NotePreviewAdapter(
     private val listener: OnNoteClickListener
 ) : RecyclerView.Adapter<NotePreviewHolder>() {
 
     private val notes = mutableListOf<Note>()
-    private var isSelectionMode = false
+    private var selectionMode = false
 
+    // untuk toggle select mode di mainfragment
     fun setSelectionMode(isActive: Boolean) {
-        isSelectionMode = isActive
+        selectionMode = isActive
         notifyDataSetChanged()
     }
 
+    // digunakan untuk inisialisasi atau setting ulang data
+    // (seperti ketika refresh habis ada perubahan data di NoteRepository dll)
     fun setData(newNotes: List<Note>) {
         notes.clear()
         notes.addAll(newNotes)
@@ -39,7 +41,7 @@ class NotePreviewAdapter(
     }
 
     override fun onBindViewHolder(holder: NotePreviewHolder, position: Int) {
-        holder.bindData(notes[position], isSelectionMode)
+        holder.bindNoteData(notes[position], selectionMode)
     }
 
     override fun getItemCount(): Int {

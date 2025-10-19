@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -25,6 +26,8 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
     protected lateinit var notesRecyclerView: RecyclerView
     protected lateinit var noteAdapter: NotePreviewAdapter
     private val selectedNotes = mutableSetOf<Note>()
+    private var emptyView: TextView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +49,7 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
+        emptyView = view.findViewById(R.id.empty_view)
         noteAdapter = NotePreviewAdapter(this)
         setupRecyclerView()
         loadNotes()
@@ -64,6 +68,8 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
         loadNotes()
     }
 
+
+    // Buka NoteFullView (melihat semua seluruh isi note) ketika diclick
     override fun onNoteClicked(note: Note) {
         val fragment = NoteFullViewFragment()
         fragment.arguments = bundleOf("NOTE_ID" to note.id)
@@ -73,7 +79,7 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
             .addToBackStack(null)
             .commit()
     }
-
+    // menambah/mengeluarkan note dari list selectedNotes
     override fun onNoteSelected(note: Note, isSelected: Boolean) {
         if (isSelected) {
             selectedNotes.add(note)
@@ -84,20 +90,32 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
         }
     }
 
-    fun getSelectedNotes() : Set<Note> {
+    fun getSelectedNotes() : Set<Note> { // dipanggil di MainFragment
         Log.d(BASE_NOTE_LIST_FRAGMENT, "getSelectedNotes() -> Selected ${selectedNotes.size} notes")
         return selectedNotes
+    }
+
+    protected fun updateEmptyViewVisibility(list: List<Any>, emptyTextResId: Int) {
+        if (list.isEmpty()) {
+            notesRecyclerView.visibility = View.GONE
+            emptyView?.visibility = View.VISIBLE
+            emptyView?.setText(emptyTextResId)
+        } else {
+            notesRecyclerView.visibility = View.VISIBLE
+            emptyView?.visibility = View.GONE
+        }
     }
 
     private fun setupRecyclerView() {
         notesRecyclerView.adapter = noteAdapter
         notesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
             }
-
+            // User bisa swipe note item ke kanan atau kiri untuk menghapus atau mengedit
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
                 val note = noteAdapter.getNoteAt(position)
@@ -133,23 +151,20 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
                     val deleteLayout = itemView.findViewById<View>(R.id.delete_action_layout)
                     val cardView = itemView.findViewById<View>(R.id.note_card)
 
-                    // Show the correct background
                     when {
-                        dX > 0 -> { // Swiping right
+                        dX > 0 -> {
                             editLayout.visibility = View.VISIBLE
                             deleteLayout.visibility = View.GONE
                         }
-                        dX < 0 -> { // Swiping left
+                        dX < 0 -> {
                             editLayout.visibility = View.GONE
                             deleteLayout.visibility = View.VISIBLE
                         }
-                        else -> { // Not swiped
+                        else -> {
                             editLayout.visibility = View.GONE
                             deleteLayout.visibility = View.GONE
                         }
                     }
-
-                    // Manually move only the card on top, leaving the background stationary.
                     cardView.translationX = dX
 
                 } else {
@@ -158,10 +173,8 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener, NoteRepos
             }
 
             override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                // This is called when a swipe is cancelled or completed.
                 super.clearView(recyclerView, viewHolder)
                 val itemView = viewHolder.itemView
-                // Reset the translation of the card
                 itemView.findViewById<View>(R.id.note_card).translationX = 0f
 
                 // Hide the backgrounds

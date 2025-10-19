@@ -22,40 +22,36 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Find all the views
         accountSection = view.findViewById(R.id.account_section)
         accountTitle = view.findViewById(R.id.account_title)
         accountSubtitle = view.findViewById(R.id.account_subtitle)
         backupSwitch = view.findViewById(R.id.backup_switch)
         backupStatusSubtitle = view.findViewById(R.id.backup_status_subtitle)
 
-        // Set the initial UI state
         updateUi()
 
-        // Set the click listener for the account section
         accountSection.setOnClickListener {
             if (isUserLoggedIn) {
-                // If logged in, show a dialog to log out
                 showLogoutDialog()
             } else {
-                // If logged out, simulate a login
                 isUserLoggedIn = true
                 updateUi()
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        (activity as? MainActivity)?.updateTitle("Settings")
+    }
     private fun updateUi() {
         if (isUserLoggedIn) {
-            // --- Logged-In State ---
             accountTitle.text = "Prototype User"
             accountSubtitle.text = "user.prototype@email.com"
             backupSwitch.isEnabled = true
             backupSwitch.isChecked = true // Assume backup is on after login
             backupStatusSubtitle.text = "Last backup: Never"
         } else {
-            // --- Logged-Out State ---
             accountTitle.text = "Account"
             accountSubtitle.text = "Log in to back up and sync your notes"
             backupSwitch.isEnabled = false
@@ -76,9 +72,4 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Set the toolbar title
-        (activity as? AppCompatActivity)?.supportActionBar?.title = "Settings"
-    }
 }

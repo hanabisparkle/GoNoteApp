@@ -9,7 +9,9 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import com.example.gonoteapp.MainActivity
+import com.example.gonoteapp.NotePreviewAdapter
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.example.gonoteapp.model.Note
@@ -70,19 +72,27 @@ class MainFragment : BaseNoteListFragment() {
             }
         }
 
+        deleteButton.setOnClickListener {
+            val selectedNotes = getSelectedNotes()
+            if (selectedNotes.isNotEmpty()) {
+                showDeleteSelectedNotesDialog(selectedNotes)
+            }
+        }
+
     }
 
     private fun filterNotes(query: String?) {
         val allNotes = NoteRepository.getAllNotes()
-        if (query.isNullOrBlank()) {
-            noteAdapter.setData(allNotes)
+        val notesToShow = if (query.isNullOrBlank()) {
+            allNotes
         } else {
-            val filteredNotes = allNotes.filter { note ->
+            allNotes.filter { note ->
                 note.title.contains(query, ignoreCase = true) ||
-                note.content.contains(query, ignoreCase = true)
+                        note.content.contains(query, ignoreCase = true)
             }
-            noteAdapter.setData(filteredNotes)
         }
+        noteAdapter.setData(notesToShow)
+        updateEmptyViewVisibility(notesToShow, R.string.empty_notes)
     }
 
 
@@ -92,7 +102,26 @@ class MainFragment : BaseNoteListFragment() {
     }
 
     override fun loadNotes() {
-        noteAdapter.setData(NoteRepository.getAllNotes())
+        val allNotes = NoteRepository.getAllNotes()
+        noteAdapter.setData(allNotes)
+        updateEmptyViewVisibility(allNotes, R.string.empty_notes)
+    }
+
+    private fun showDeleteSelectedNotesDialog(selectedNotes: Set<Note>){
+        val options = arrayOf("Delete", "Cancel")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Note")
+            .setMessage("Are you sure you want to delete these notes?")
+            .setPositiveButton("Delete") { _, _ ->
+                for (note in selectedNotes){
+                    NoteRepository.deleteNote(note.id)
+                }
+                notesRecyclerView.adapter = noteAdapter
+                loadNotes()
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
     }
 
     private fun showFolderSelectDialog(selectedNotes: Set<Note>) {
