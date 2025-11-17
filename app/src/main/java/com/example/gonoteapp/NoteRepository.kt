@@ -1,21 +1,27 @@
 package com.example.gonoteapp
 
 import android.util.Log
-import androidx.core.os.bundleOf
 import com.example.gonoteapp.model.Folder
 import com.example.gonoteapp.model.Note
-import androidx.fragment.app.setFragmentResult
-object NoteRepository {
-    interface OnDataChangeListener {
-        fun onDataChanged()
-    }
-    private const val NOTE_REPOSITORY = "NOTE_REPOSITORY"
-    private val notes = mutableListOf<Note>()
-    private val folders = mutableListOf<Folder>()
-    private var nextId = 1L
-    private var nextFolderId = 1L
 
-    // Data dummy yang di-hard code
+/**
+ * Repository tunggal (singleton) yang mengelola semua data catatan dan folder.
+ * Bertindak sebagai sumber data utama (source of truth) untuk seluruh aplikasi.
+ * PENTING: Saat ini, semua data disimpan di memori dan akan hilang saat aplikasi ditutup.
+ * Ini adalah implementasi sederhana untuk tujuan demonstrasi.
+ */
+object NoteRepository {
+
+    private const val NOTE_REPOSITORY = "NOTE_REPOSITORY"
+    private val notes = mutableListOf<Note>() // Daftar internal untuk semua catatan
+    private val folders = mutableListOf<Folder>() // Daftar internal untuk semua folder
+    private var nextId = 1L // Untuk auto-increment ID catatan
+    private var nextFolderId = 1L // Untuk auto-increment ID folder
+
+    /**
+     * Blok inisialisasi yang dijalankan saat repository pertama kali dibuat.
+     * Digunakan untuk mengisi data dummy agar aplikasi tidak kosong saat pertama kali dijalankan.
+     */
     init {
         val folder1 = Folder(nextFolderId++, "Personal")
         val folder2 = Folder(nextFolderId++, "Work")
@@ -25,73 +31,94 @@ object NoteRepository {
             Note(nextId++, folder2.id,"Meeting Notes", "Discuss Q3 budget and project timelines.", System.currentTimeMillis()),
             Note(nextId++, folder1.id, "Shopping List", "Milk, Bread, Eggs, Coffee.", System.currentTimeMillis()),
             Note(nextId++, folder1.id, "Book Ideas", "A story about a time-traveling librarian.", System.currentTimeMillis()),
-            Note(nextId++, 0L, "Workout Plan", "Monday: Chest, Tuesday: Back, Wednesday: Legs.", System.currentTimeMillis())
+            Note(nextId++, 0L, "Workout Plan", "Monday: Chest, Tuesday: Back, Wednesday: Legs.", System.currentTimeMillis()) // 0L berarti tidak ada folder
         )
         notes.addAll(initialNotes)
     }
 
-    // FUNCTION
+    // --- FUNGSI UNTUK FOLDER ---
 
-    // CRUD note & folder
-
-    // mengambil/memproses/mengfilter note & folder
-
+    /**
+     * Menambahkan folder baru.
+     */
     fun addFolder(name: String) {
         folders.add(Folder(nextFolderId++, name))
         Log.d(NOTE_REPOSITORY, "addFolder() -> Folder Name: ${name}")
     }
-    fun addNote(title: String, content: String, folderName: String? = null) {
-        val folderId = folderName?.let { name ->
-            folders.find { it.name == name }?.id
-        } ?: 0L
 
-        val newNote = Note(
-            id = nextId++,
-            folderId = folderId,
-            title = title,
-            content = content,
-            timestamp = System.currentTimeMillis()
-        )
-        notes.add(0, newNote)
-        Log.d(NOTE_REPOSITORY, "addNote() -> Note added to folderId: $folderId")
-    }
-
-    // mengambil semua note & folder
-    fun getAllNotes(): List<Note> {
-        Log.d(NOTE_REPOSITORY, "getAllNotes()")
-        return notes.toList()
-    }
+    /**
+     * Mengambil semua folder. Juga menghitung jumlah catatan di setiap folder.
+     */
     fun getAllFolders(): List<Folder> {
         for (f in folders) {
             f.noteCount = notes.count { it.folderId == f.id }
-            Log.d(NOTE_REPOSITORY, "getAllFolders() -> Folder Name: ${f.name}, Note Count: ${f.noteCount}")
         }
         return folders.toList()
     }
 
-    fun getNoteById(id: Long): Note? {
-        Log.d(NOTE_REPOSITORY, "getNoteById()")
-        return notes.find { it.id == id }
-    }
-
+    /**
+     * Mencari folder berdasarkan ID-nya.
+     */
     fun getFolderById(id: Long): Folder? {
-        Log.d(NOTE_REPOSITORY, "getFolderById()")
         return folders.find { it.id == id }
     }
 
-    // ambil semua note yang ada di dalam folder
-    fun getNotesForFolder(folderId: Long): List<Note> {
-        val folder = folders.find { it.id == folderId }
-        Log.d(NOTE_REPOSITORY, "getNotesForFolder()")
-        return if (folder != null) {
-            Log.d(NOTE_REPOSITORY, "getNotesForFolder() -> There are notes in this folder")
-            notes.filter { it.folderId == folder.id }.toList()
-        } else {
-            Log.d(NOTE_REPOSITORY, "getNotesForFolder() ->  This folder is empty")
-            emptyList()
-        }
+    /**
+     * Memperbarui nama folder yang sudah ada.
+     */
+    fun updateFolder(id: Long, newName: String) {
+        val folderToUpdate = getFolderById(id)
+        folderToUpdate?.name = newName
+        Log.d(NOTE_REPOSITORY, "updateFolder() -> Folder has been updated")
     }
 
+    /**
+     * Menghapus folder berdasarkan ID.
+     */
+    fun deleteFolder(id: Long) {
+        folders.removeAll { it.id == id }
+        Log.d(NOTE_REPOSITORY, "deleteFolder() -> Folder has been deleted")
+    }
+
+    // --- FUNGSI UNTUK CATATAN ---
+
+    /**
+     * Menambahkan catatan baru. Bisa dengan atau tanpa folder.
+     */
+    fun addNote(title: String, content: String, folderName: String? = null) {
+        val folderId = folderName?.let { name ->
+            folders.find { it.name == name }?.id
+        } ?: 0L // Jika folderName null atau tidak ditemukan, folderId diatur ke 0L (tanpa folder)
+
+        val newNote = Note(nextId++, folderId, title, content, System.currentTimeMillis())
+        notes.add(0, newNote) // Tambahkan ke paling atas
+        Log.d(NOTE_REPOSITORY, "addNote() -> Note added to folderId: $folderId")
+    }
+
+    /**
+     * Mengambil semua catatan, diurutkan dari yang terbaru.
+     */
+    fun getAllNotes(): List<Note> {
+        return notes.sortedByDescending { it.timestamp }
+    }
+
+    /**
+     * Mencari catatan berdasarkan ID-nya.
+     */
+    fun getNoteById(id: Long): Note? {
+        return notes.find { it.id == id }
+    }
+
+    /**
+     * Mengambil semua catatan yang termasuk dalam folder tertentu.
+     */
+    fun getNotesForFolder(folderId: Long): List<Note> {
+        return notes.filter { it.folderId == folderId }.sortedByDescending { it.timestamp }
+    }
+
+    /**
+     * Memperbarui judul, konten, dan folder dari catatan yang sudah ada.
+     */
     fun updateNote(id: Long, newTitle: String, newContent: String, folderName: String? = null) {
         val noteToUpdate = getNoteById(id)
         noteToUpdate?.let {
@@ -107,26 +134,12 @@ object NoteRepository {
         }
         Log.d(NOTE_REPOSITORY, "updateNote() -> Note has been updated")
     }
-    fun updateFolder(id: Long, newName: String) {
-        val folderToUpdate = getFolderById(id)
-        folderToUpdate?.let {
-            it.name = newName
-        }
-        Log.d(NOTE_REPOSITORY, "updateFolder() -> Folder has been updated")
-    }
 
-    fun deleteFolder(id: Long) {
-        val folderToDelete = getFolderById(id)
-        folderToDelete?.let {
-            folders.remove(it)
-        }
-        Log.d(NOTE_REPOSITORY, "deleteFolder() -> Folder has been deleted")
-    }
+    /**
+     * Menghapus catatan berdasarkan ID.
+     */
     fun deleteNote(id: Long) {
-        val noteToDelete = getNoteById(id)
-        noteToDelete?.let {
-            notes.remove(it)
-        }
+        notes.removeAll { it.id == id }
         Log.d(NOTE_REPOSITORY, "deleteNote() -> Note has been deleted")
     }
 }

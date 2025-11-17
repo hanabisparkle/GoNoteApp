@@ -12,4 +12,5 @@
     <string name="backupsync_login_prompt">Log in to enable backup</string>
     <string name="empty_notes">No notes found</string>
     <string name="empty_folders">No folders found</string>
+    <string name="empty_search_result">No notes match your search</string>
 </resources>
