@@ -41,7 +41,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.7.1")
     // For the 'by viewModels()' delegate
     implementation("androidx.fragment:fragment-ktx:1.6.2")
-
+    implementation("com.google.code.gson:gson:2.10.1")
 // For Markwon Markdown rendering
     implementation("io.noties.markwon:core:4.6.2")
     implementation("io.noties.markwon:editor:4.6.2")

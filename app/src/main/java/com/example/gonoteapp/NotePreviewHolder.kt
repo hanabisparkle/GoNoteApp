@@ -20,6 +20,8 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
     private val title: TextView = itemView.findViewById(R.id.item_note_title)
     private val content: TextView = itemView.findViewById(R.id.item_note_content)
     private val timestamp: TextView = itemView.findViewById(R.id.item_note_timestamp)
+
+    private val foldername: TextView = itemView.findViewById(R.id.item_note_folder)
     private val checkbox: CheckBox = itemView.findViewById(R.id.note_checkbox)
 
     /**
@@ -30,10 +32,11 @@ class NotePreviewHolder(itemView: View, private val listener: OnNoteClickListene
      * @param isSelectionMode Status apakah mode seleksi sedang aktif.
      * @param isSelected Status apakah item ini sedang diseleksi.
      */
-    fun bindNoteData(note: Note, isSelectionMode: Boolean, isSelected: Boolean) {
+    fun bindNoteData(note: Note, isSelectionMode: Boolean, isSelected: Boolean, folderName: String) {
         title.text = note.title
         content.text = note.content
         timestamp.text = formatDate(note.timestamp)
+        foldername.text = folderName
 
         // Tampilkan atau sembunyikan checkbox berdasarkan mode seleksi
         if (isSelectionMode) {

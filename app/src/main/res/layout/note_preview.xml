@@ -80,14 +80,26 @@
                 tools:visibility="visible" />
 
             <TextView
-                android:id="@+id/item_note_timestamp"
+                android:id="@+id/item_note_folder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_margin="8dp"
                 android:textAppearance="?attr/textAppearanceCaption"
-                app:layout_constraintStart_toStartOf="parent"
+                android:background="@color/lightbluishgrey"
+                android:paddingHorizontal="8dp"
+                app:layout_constraintStart_toEndOf="@id/item_note_timestamp"
                 app:layout_constraintTop_toBottomOf="@id/item_note_title"
-                tools:text="Oct 13" />
+                tools:text="No Folder" />
+
+        <TextView
+            android:id="@+id/item_note_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="?attr/textAppearanceCaption"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_note_title"
+            tools:text="Oct 13" />
 
         <TextView
             android:id="@+id/item_note_content"

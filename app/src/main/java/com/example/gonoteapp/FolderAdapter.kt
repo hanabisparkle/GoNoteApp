@@ -131,4 +131,8 @@ class FolderAdapter(
     fun getFolderAt(position: Int): Folder {
         return folders[position]
     }
+
+    fun getFolderById(folderId: Long): Folder? {
+        return folders.find { it.id == folderId }
+    }
 }

@@ -85,8 +85,16 @@ class NewNoteFragment : Fragment() {
 
         // Listener untuk tombol simpan.
         saveButton.setOnClickListener {
-            val title = titleEditText.text.toString()
+            var title = " "
+            title = if (titleEditText.text.toString() == ""){
+                "Untitled Note " + System.currentTimeMillis()
+            } else {
+                titleEditText.text.toString()
+            }
+
             val content = contentEditText.text.toString()
+
+
             // Panggil ViewModel untuk menyimpan catatan.
             viewModel.saveNote(title, content, folderName)
         }

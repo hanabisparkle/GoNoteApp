@@ -1,8 +1,15 @@
 package com.example.gonoteapp
 
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gonoteapp.NoteRepository.deleteNote
+import com.example.gonoteapp.NoteRepository.getFolderById
+import com.example.gonoteapp.fragments.FolderNotesFragment
+import com.example.gonoteapp.model.Folder
 import com.example.gonoteapp.model.Note
 
 /**
@@ -15,10 +22,18 @@ interface OnNoteClickListener {
      */
     fun onNoteClicked(note: Note)
 
+    fun onNoteLongHold(note: Note)
+
     /**
      * Dipanggil saat status seleksi sebuah catatan berubah.
      */
     fun onNoteSelected(note: Note, isSelected: Boolean)
+
+    fun onGoToFolderClicked(note: Note, folder: Folder)
+
+    //fun onDeleteFolderClicked(note: Note)
+
+    //fun onSelectNoteClicked(note: Note)
 }
 
 /**
@@ -26,7 +41,7 @@ interface OnNoteClickListener {
  * Mirip dengan [FolderAdapter], tetapi untuk objek [Note].
  */
 class NotePreviewAdapter(
-    private val listener: OnNoteClickListener // Listener untuk event klik
+    private val listener: OnNoteClickListener// Listener untuk event klik
 ) : RecyclerView.Adapter<NotePreviewHolder>() {
 
     private val notes = mutableListOf<Note>() // Daftar semua catatan
@@ -111,8 +126,20 @@ class NotePreviewAdapter(
     override fun onBindViewHolder(holder: NotePreviewHolder, position: Int) {
         val note = notes[position]
         val isSelected = selectedNotes.contains(note)
+        var noteFolderName = "No Folder"
+
+        if (note.folderId != 0L) {
+            val noteFolder = NoteRepository.getFolderById(note.folderId)
+            noteFolderName = noteFolder?.name ?:"No Folder"
+        }
+
+        holder.itemView.setOnLongClickListener {
+            listener.onNoteLongHold(note)
+            true
+        }
+
         // Mengirim data dan status seleksi ke ViewHolder
-        holder.bindNoteData(note, selectionMode, isSelected)
+        holder.bindNoteData(note, selectionMode, isSelected, noteFolderName)
     }
 
     /**
@@ -121,4 +148,46 @@ class NotePreviewAdapter(
     override fun getItemCount(): Int {
         return notes.size
     }
+
+    fun showLongHoldMenu(note: Note, anchor: View) {
+        val popup = PopupMenu(anchor.context, anchor)
+        popup.menuInflater.inflate(R.menu.note_hold_menu, popup.menu)
+        popup.setOnMenuItemClickListener { item ->
+            when(item.itemId) {
+                R.id.menu_go_to_folder -> {
+                    // mencari folder dan menugaskan aksi ke fragment BaseNoteList
+                    getFolderById(note.folderId)?.let {
+                            folder ->
+                        listener.onGoToFolderClicked(note, folder)
+                    }
+                    true
+                }
+                R.id.menu_delete_note -> {
+                    //deleteNote(note.id)
+                    true
+                }
+                R.id.menu_select_note -> {
+                    //deleteNote(note.id)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.gravity = Gravity.END
+        popup.show()
+    }
+
+
+    /**
+     * Finds the current position (index) of a given note in the adapter's list.
+     * This is the REVERSE of getNoteAt().
+     *
+     * @param note The note object to find.
+     * @return The index of the note in the list, or -1 if not found.
+     */
+    fun getNotePosition(note: Note): Int {
+        // Use the indexOf function on the list to find the note's position.
+        return notes.indexOf(note)
+    }
+
 }

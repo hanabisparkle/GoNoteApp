@@ -53,6 +53,7 @@ class NewNoteViewModel : ViewModel() {
         } else {
             NoteRepository.addNote(title, content, folderName)
         }
+
         // Memberi sinyal ke Fragment untuk navigasi kembali.
         _navigateBack.value = true
     }

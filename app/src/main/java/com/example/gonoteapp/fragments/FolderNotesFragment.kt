@@ -6,12 +6,13 @@ import androidx.appcompat.widget.Toolbar
 import com.example.gonoteapp.MainActivity
 import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
+import com.example.gonoteapp.model.Note
 import kotlin.properties.Delegates
 
 /**
  * Fragment untuk menampilkan daftar catatan yang ada di dalam sebuah folder spesifik.
  * Merupakan turunan dari [BaseNoteListFragment] dan mengimplementasikan `loadNotes`.
- */
+ */ 
 class FolderNotesFragment : BaseNoteListFragment() {
 
     private lateinit var folderName: String
@@ -70,6 +71,10 @@ class FolderNotesFragment : BaseNoteListFragment() {
         noteAdapter.setData(notes)
         // Menampilkan pesan jika tidak ada catatan di folder ini.
         updateEmptyViewVisibility(notes, R.string.empty_notes)
+    }
+
+    override fun onNoteLongHold(note: Note) {
+        TODO("Not yet implemented")
     }
 
     /**

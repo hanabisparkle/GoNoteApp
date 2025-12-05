@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Go to Folder, only visible if note has a folder -->
+    <item
+        android:id="@+id/menu_go_to_folder"
+        android:title="Go to Folder"
+        android:icon="@drawable/ic_folder"
+        android:showAsAction="never"/>
+
+    <!-- Delete Note -->
+    <item
+        android:id="@+id/menu_delete_note"
+        android:title="Delete Note"
+        android:icon="@drawable/ic_delete"
+        android:showAsAction="never"/>
+
+    <item
+        android:id="@+id/menu_select_note"
+        android:title="Select Note"
+        android:icon="@drawable/ic_delete"
+        android:showAsAction="never"/>
+
+</menu>

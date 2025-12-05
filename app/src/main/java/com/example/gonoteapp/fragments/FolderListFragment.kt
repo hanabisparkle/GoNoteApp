@@ -1,6 +1,7 @@
 package com.example.gonoteapp.fragments
 
 import android.graphics.Canvas
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -165,7 +167,48 @@ class FolderListFragment : Fragment(), OnFolderClickListener {
                     foldersAdapter.notifyItemChanged(position) // Reset tampilan item
                 }
             }
-            // ... (kode untuk visual swipe tetap sama)
+
+            override fun onChildDraw(
+                c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+            ) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
+                val itemView = viewHolder.itemView
+                val background = ColorDrawable()
+                val icon: android.graphics.drawable.Drawable?
+
+                // Geser ke kanan (Edit)
+                if (dX > 0) {
+                    icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_edit)
+                    background.color = ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark)
+                    background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+                    background.draw(c)
+
+                    val iconTop = itemView.top + (itemView.height - (icon?.intrinsicHeight ?: 0)) / 2
+                    val iconMargin = (itemView.height - (icon?.intrinsicHeight ?: 0)) / 2
+                    val iconLeft = itemView.left + iconMargin
+                    val iconRight = itemView.left + iconMargin + (icon?.intrinsicWidth ?: 0)
+                    val iconBottom = iconTop + (icon?.intrinsicHeight ?: 0)
+                    icon?.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    icon?.draw(c)
+                }
+                // Geser ke kiri (Delete)
+                else if (dX < 0) {
+                    icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
+                    background.color = ContextCompat.getColor(requireContext(), android.R.color.holo_red_light)
+                    background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                    background.draw(c)
+
+                    val iconTop = itemView.top + (itemView.height - (icon?.intrinsicHeight ?: 0)) / 2
+                    val iconMargin = (itemView.height - (icon?.intrinsicHeight ?: 0)) / 2
+                    val iconLeft = itemView.right - iconMargin - (icon?.intrinsicWidth ?: 0)
+                    val iconRight = itemView.right - iconMargin
+                    val iconBottom = iconTop + (icon?.intrinsicHeight ?: 0)
+                    icon?.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+                    icon?.draw(c)
+                }
+            }
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(foldersRecyclerView)
     }
