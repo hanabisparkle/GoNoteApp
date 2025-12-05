@@ -174,6 +174,9 @@ class MainActivity : AppCompatActivity() {
             addView(editText)
         }
 
+        val repository = NoteRepository.getInstance(this)
+
+
         MaterialAlertDialogBuilder(this)
             .setTitle("New Folder")
             .setView(layout)
@@ -181,7 +184,7 @@ class MainActivity : AppCompatActivity() {
                 val folderName = editText.text.toString()
                 if (folderName.isNotBlank()) {
                     // Panggil repository untuk menyimpan folder baru.
-                    NoteRepository.addFolder(folderName)
+                    repository.addFolder(folderName)
                 }
                 // Refresh tampilan daftar folder.
                 supportFragmentManager.beginTransaction()

@@ -27,6 +27,9 @@ class MainFragment : BaseNoteListFragment() {
     private lateinit var addToFolderButton: Button
     private lateinit var selectAllCheckbox: CheckBox
 
+    private lateinit var repository: NoteRepository
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -98,11 +101,18 @@ class MainFragment : BaseNoteListFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Initialize the repository here
+        repository = NoteRepository.getInstance(requireContext())
+    }
+
+
     /**
      * Memfilter daftar catatan berdasarkan query pencarian.
      */
     private fun filterNotes(query: String?) {
-        val allNotes = NoteRepository.getAllNotes()
+        val allNotes = repository.getAllNotes()
         val notesToShow = if (query.isNullOrBlank()) {
             allNotes // Tampilkan semua jika query kosong
         } else {
@@ -125,7 +135,7 @@ class MainFragment : BaseNoteListFragment() {
      * Memuat semua catatan dari [NoteRepository].
      */
     override fun loadNotes() {
-        val allNotes = NoteRepository.getAllNotes()
+        val allNotes = repository.getAllNotes()
         noteAdapter.setData(allNotes)
         updateEmptyViewVisibility(allNotes, R.string.empty_notes) // Tampilkan pesan jika tidak ada catatan sama sekali
     }
@@ -138,7 +148,7 @@ class MainFragment : BaseNoteListFragment() {
             .setTitle("Delete Note")
             .setMessage("Are you sure you want to delete these notes?")
             .setPositiveButton("Delete") { _, _ ->
-                selectedNotes.forEach { NoteRepository.deleteNote(it.id) }
+                selectedNotes.forEach { repository.deleteNote(it.id) }
                 loadNotes() // Muat ulang daftar
                 // Keluar dari mode seleksi setelah selesai
                 isSelectionMode = false
@@ -156,7 +166,7 @@ class MainFragment : BaseNoteListFragment() {
      * Menampilkan dialog untuk memilih folder tujuan saat memindahkan catatan.
      */
     private fun showFolderSelectDialog(selectedNotes: Set<Note>) {
-        val folders = NoteRepository.getAllFolders()
+        val folders = repository.getAllFolders()
         if (folders.isNotEmpty()) {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Select folder")

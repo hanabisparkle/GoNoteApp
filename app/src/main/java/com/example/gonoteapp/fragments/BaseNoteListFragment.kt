@@ -47,9 +47,9 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener{
         super.onViewCreated(view, savedInstanceState)
         notesRecyclerView = view.findViewById(R.id.notes_recycler_view)
         emptyView = view.findViewById(R.id.note_empty_view)
-
+        val repository = NoteRepository.getInstance(requireContext())
         // Inisialisasi adapter dengan listener dari fragment ini.
-        noteAdapter = NotePreviewAdapter(this)
+        noteAdapter = NotePreviewAdapter(this, repository)
         setupRecyclerView()
         loadNotes() // Memuat data catatan (implementasi ada di kelas turunan)
     }
@@ -249,7 +249,7 @@ abstract class BaseNoteListFragment : Fragment(), OnNoteClickListener{
             .setTitle("Delete Note")
             .setMessage("Are you sure you want to delete the note: '${note.title}'?")
             .setPositiveButton("Delete") { _, _ ->
-                NoteRepository.deleteNote(note.id)
+                NoteRepository.getInstance(requireContext()).deleteNote(note.id)
                 loadNotes()
             }
             .setNegativeButton("Cancel") { _, _ -> noteAdapter.notifyItemChanged(viewHolder.adapterPosition) }

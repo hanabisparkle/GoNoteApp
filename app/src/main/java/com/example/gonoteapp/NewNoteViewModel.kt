@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import com.example.gonoteapp.model.Note
 
 /**
- * ViewModel untuk [NewNoteFragment].
+ * ViewModel untuk  newnotefragment
  * Mengelola logika untuk membuat catatan baru atau mengedit catatan yang sudah ada.
  */
-class NewNoteViewModel : ViewModel() {
+class NewNoteViewModel(private val repository: NoteRepository) : ViewModel() {
 
     // ID dari catatan yang akan diedit. Defaultnya -1L, menandakan mode pembuatan baru.
     private var noteIdToEdit: Long = -1L
@@ -40,7 +40,7 @@ class NewNoteViewModel : ViewModel() {
         noteIdToEdit = noteId
 
         // Mengambil data catatan dari repository dan menyimpannya di LiveData.
-        _note.value = NoteRepository.getNoteById(noteId)
+        _note.value = repository.getNoteById(noteId)
     }
 
     /**
@@ -49,9 +49,9 @@ class NewNoteViewModel : ViewModel() {
      */
     fun saveNote(title: String, content: String, folderName: String? = null) {
         if (isEditMode) {
-            NoteRepository.updateNote(noteIdToEdit, title, content, folderName)
+            repository.updateNote(noteIdToEdit, title, content, folderName)
         } else {
-            NoteRepository.addNote(title, content, folderName)
+            repository.addNote(title, content, folderName)
         }
 
         // Memberi sinyal ke Fragment untuk navigasi kembali.

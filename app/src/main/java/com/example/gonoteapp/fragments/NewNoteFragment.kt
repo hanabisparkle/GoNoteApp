@@ -10,7 +10,10 @@ import android.widget.ImageButton
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.gonoteapp.NewNoteViewModel
+import com.example.gonoteapp.NewNoteViewModelFactory
+import com.example.gonoteapp.NoteRepository
 import com.example.gonoteapp.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.noties.markwon.Markwon
@@ -24,7 +27,7 @@ import io.noties.markwon.editor.MarkwonEditorTextWatcher
 class NewNoteFragment : Fragment() {
 
     // Inisialisasi ViewModel menggunakan delegasi 'by viewModels()'.
-    private val viewModel: NewNoteViewModel by viewModels()
+    private lateinit var viewModel: NewNoteViewModel
 
     // Launcher untuk memilih gambar dari galeri.
     private val selectImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -41,6 +44,18 @@ class NewNoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
+        // 1. Get the repository instance (the context is available here).
+        val repository = NoteRepository.getInstance(requireContext().applicationContext)
+
+        // 2. Create an instance of the factory you just made.
+        val viewModelFactory = NewNoteViewModelFactory(repository)
+
+        // 3. Use the factory to get your ViewModel instance.
+        // The framework will now call your factory's 'create' method.
+        viewModel = ViewModelProvider(this, viewModelFactory).get(NewNoteViewModel::class.java)
+
 
         // Inisialisasi semua view dari layout.
         val titleEditText: EditText = view.findViewById(R.id.new_note_title)

@@ -111,7 +111,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener {
      * Memuat daftar folder dari [NoteRepository] dan menampilkannya di adapter.
      */
     private fun loadFolders() {
-        val folders = NoteRepository.getAllFolders()
+        val folders = NoteRepository.getInstance(requireContext()).getAllFolders()
         foldersAdapter.setData(folders)
         // Tampilkan pesan jika daftar kosong
         if (folders.isEmpty()) {
@@ -224,7 +224,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener {
             .setPositiveButton("Save") { _, _ ->
                 val newName = editText.text.toString()
                 if (newName.isNotBlank() && newName != folder.name) {
-                    NoteRepository.updateFolder(folder.id, newName)
+                    NoteRepository.getInstance(requireContext()).updateFolder(folder.id, newName)
                     loadFolders() // Muat ulang data
                 }
             }
@@ -240,7 +240,7 @@ class FolderListFragment : Fragment(), OnFolderClickListener {
             .setTitle("Delete Folder")
             .setMessage("Are you sure you want to delete '${folder.name}'? Notes inside will become uncategorized.")
             .setPositiveButton("Delete") { _, _ ->
-                NoteRepository.deleteFolder(folder.id)
+                NoteRepository.getInstance(requireContext()).deleteFolder(folder.id)
                 loadFolders()
             }
             .setNegativeButton("Cancel") { _, _ -> foldersAdapter.notifyItemChanged(viewHolder.adapterPosition) }
@@ -256,9 +256,11 @@ class FolderListFragment : Fragment(), OnFolderClickListener {
             .setTitle("Delete Selected Folders")
             .setMessage("Are you sure you want to permanently delete the selected folders? Any notes within them will be uncategorized.")
             .setPositiveButton("Delete") { _, _ ->
+                val repository = NoteRepository.getInstance(requireContext())
                 selectedFolders.forEach { folder ->
-                    NoteRepository.getNotesForFolder(folder.id).forEach { it.folderId = 0L } // Set folderId ke 0 (uncategorized)
-                    NoteRepository.deleteFolder(folder.id)
+                    // Use the repository instance to get notes and then delete the folder
+                    repository.getNotesForFolder(folder.id).forEach { it.folderId = 0L }
+                    repository.deleteFolder(folder.id)
                 }
                 loadFolders()
                 // Keluar dari mode seleksi setelah selesai

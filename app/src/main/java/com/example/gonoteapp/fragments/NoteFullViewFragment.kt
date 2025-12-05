@@ -28,6 +28,8 @@ class NoteFullViewFragment : Fragment() {
     private lateinit var timestampView: TextView
     private lateinit var markwon: Markwon // Library untuk merender Markdown
 
+    val repository = NoteRepository.getInstance(requireContext())
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_note_full_view, container, false)
@@ -82,7 +84,7 @@ class NoteFullViewFragment : Fragment() {
      * Mengambil data catatan dari repository dan menampilkannya di view.
      */
     private fun updateNoteData() {
-        val note = NoteRepository.getNoteById(currentNoteId)
+        val note = repository.getNoteById(currentNoteId)
 
         if (note != null && view != null) {
             titleView.text = note.title

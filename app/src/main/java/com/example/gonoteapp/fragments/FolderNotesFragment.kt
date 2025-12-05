@@ -12,7 +12,7 @@ import kotlin.properties.Delegates
 /**
  * Fragment untuk menampilkan daftar catatan yang ada di dalam sebuah folder spesifik.
  * Merupakan turunan dari [BaseNoteListFragment] dan mengimplementasikan `loadNotes`.
- */ 
+ */
 class FolderNotesFragment : BaseNoteListFragment() {
 
     private lateinit var folderName: String
@@ -33,7 +33,8 @@ class FolderNotesFragment : BaseNoteListFragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        folderName = NoteRepository.getFolderById(folderId)?.name ?: "Unknown Folder"
+        val repository = NoteRepository.getInstance(requireContext())
+        folderName = repository.getFolderById(folderId)?.name ?: "Unknown Folder"
         // Meminta MainActivity untuk memperbarui judul di toolbar.
         (activity as? MainActivity)?.updateTitle(folderName)
 
@@ -67,7 +68,8 @@ class FolderNotesFragment : BaseNoteListFragment() {
      * Memuat catatan dari [NoteRepository] yang sesuai dengan `folderId`.
      */
     override fun loadNotes() {
-        val notes = NoteRepository.getNotesForFolder(folderId)
+        val repository = NoteRepository.getInstance(requireContext())
+        val notes = repository.getNotesForFolder(folderId)
         noteAdapter.setData(notes)
         // Menampilkan pesan jika tidak ada catatan di folder ini.
         updateEmptyViewVisibility(notes, R.string.empty_notes)

@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
-import com.example.gonoteapp.NoteRepository.deleteNote
-import com.example.gonoteapp.NoteRepository.getFolderById
 import com.example.gonoteapp.fragments.FolderNotesFragment
 import com.example.gonoteapp.model.Folder
 import com.example.gonoteapp.model.Note
@@ -41,8 +39,9 @@ interface OnNoteClickListener {
  * Mirip dengan [FolderAdapter], tetapi untuk objek [Note].
  */
 class NotePreviewAdapter(
-    private val listener: OnNoteClickListener// Listener untuk event klik
-) : RecyclerView.Adapter<NotePreviewHolder>() {
+    private val listener: OnNoteClickListener,// Listener untuk event klik
+    private val repository: NoteRepository
+    ) : RecyclerView.Adapter<NotePreviewHolder>() {
 
     private val notes = mutableListOf<Note>() // Daftar semua catatan
     private val selectedNotes = mutableSetOf<Note>() // Daftar catatan yang diseleksi
@@ -129,7 +128,7 @@ class NotePreviewAdapter(
         var noteFolderName = "No Folder"
 
         if (note.folderId != 0L) {
-            val noteFolder = NoteRepository.getFolderById(note.folderId)
+            val noteFolder = repository.getFolderById(note.folderId)
             noteFolderName = noteFolder?.name ?:"No Folder"
         }
 
@@ -156,7 +155,7 @@ class NotePreviewAdapter(
             when(item.itemId) {
                 R.id.menu_go_to_folder -> {
                     // mencari folder dan menugaskan aksi ke fragment BaseNoteList
-                    getFolderById(note.folderId)?.let {
+                    repository.getFolderById(note.folderId)?.let {
                             folder ->
                         listener.onGoToFolderClicked(note, folder)
                     }
